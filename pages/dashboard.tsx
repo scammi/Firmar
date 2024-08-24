@@ -40,7 +40,7 @@ const callRenaperAuth = async () => {
 };
 
 export default function DashboardPage() {
-  const [verifyResult, setVerifyResult] = useState();
+  const [activeStep, setValidStep] = useState(0);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
@@ -102,7 +102,7 @@ export default function DashboardPage() {
         <Grid item xs={12} md={8} lg={6}>
 
           <Box sx={{ width: '100%' }} padding={'20px'}>
-            <Stepper activeStep={0} alternativeLabel>
+            <Stepper activeStep={activeStep} alternativeLabel>
               {steps.map((label) => (
                 <Step key={label}>
                   <StepLabel>{label}</StepLabel>
@@ -110,7 +110,9 @@ export default function DashboardPage() {
               ))}
             </Stepper>
           </Box>
+          {
 
+          }
           <Paper elevation={3} style={{ padding: '20px' }}>
             <Typography variant="h5" gutterBottom>
               Webcam Capture
@@ -135,8 +137,7 @@ export default function DashboardPage() {
               Take Picture
             </Button>
             <canvas ref={canvasRef} style={{ display: 'none' }} />
-          </Paper>
-          {imageSrc && (
+            {imageSrc && (
               <div style={{ marginTop: '20px' }}>
                 <Typography variant="h6" gutterBottom>
                   Captured Image
@@ -151,18 +152,20 @@ export default function DashboardPage() {
                     borderRadius: '8px',
                   }}
                 />
-              <Button 
-                variant="contained" 
-                color="secondary" 
-                onClick={callRenaperAuth}
-                // startIcon={<SendIcon />}
-                disabled={!imageSrc}
-              >
-              Authenticate
-            </Button>
-
-              </div>
+                <Box paddingTop={'20px'}>
+                  <Button 
+                    variant="contained" 
+                    color="secondary" 
+                    onClick={callRenaperAuth}
+                    // startIcon={<SendIcon />}
+                    disabled={!imageSrc}
+                  >
+                  Authenticate
+                  </Button>
+                </Box>
+             </div>
             )}
+          </Paper>
         </Grid>
 
       </Grid>
