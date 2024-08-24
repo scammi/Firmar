@@ -6,6 +6,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Backdrop, Box, Button, CircularProgress, Grid, Paper, Step, StepLabel, Stepper, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from 'next/head';
+import { useNFTStatus } from "./components/UseNFTStatus";
 
 const callRenaperAuth = async (formData: UserFormValues, userAddress: string) => {
   try {
@@ -45,7 +46,9 @@ export default function DashboardPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const { hasNFT, isLoading: isUseNFTLoging } = useNFTStatus();
   const router = useRouter();
+
   const {
     ready,
     authenticated,
@@ -58,6 +61,19 @@ export default function DashboardPage() {
       router.push("/");
     }
   }, [ready, authenticated, router]);
+
+
+  useEffect(() => {
+    if (ready && !authenticated) {
+      router.push("/");
+    }
+  }, [ready, authenticated, router]);
+
+  useEffect(() => {
+    if (hasNFT) {
+      router.push('/dashboard');
+    }
+  }, [hasNFT, router]);
 
 
   useEffect(() => {
@@ -127,7 +143,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (!ready || !authenticated) {
+  if (!ready || !authenticated || !isUseNFTLoging) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
         <CircularProgress />
