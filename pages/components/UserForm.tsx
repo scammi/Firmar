@@ -3,7 +3,7 @@ import { Formik, Form, Field, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { Button, TextField, Box, Typography } from '@mui/material';
 
-interface UserFormValues {
+export interface UserFormValues {
   name: string;
   idNumber: string;
 }

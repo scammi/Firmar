@@ -5,11 +5,11 @@ import Head from "next/head";
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import UserDataForm from "./components/UserForm";
+import UserDataForm, { UserFormValues } from "./components/UserForm";
 
 import { Backdrop, Box, Button, CircularProgress, Grid, Paper, TextField, Typography } from "@mui/material";
 
-const callRenaperAuth = async () => {
+const callRenaperAuth = async (formData: UserFormValues, userAddress: string) => {
   try {
     const accessToken = await getAccessToken(); // You need to implement this function
     const response = await fetch('/api/renaperAuth', {
@@ -18,6 +18,11 @@ const callRenaperAuth = async () => {
         'Content-Type': 'application/json',
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
+      body: JSON.stringify({
+        nombre: formData.name,
+        dni: formData.idNumber,
+        address: userAddress
+      }),
     });
 
     const result = await response.json();
@@ -29,11 +34,13 @@ const callRenaperAuth = async () => {
 };
 
 export default function DashboardPage() {
-  const [activeStep, setValidStep] = useState(0);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const [activeStep, setValidStep] = useState(0);
   const [imageSrc, setImageSrc] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<UserFormValues>();
+
 
   const router = useRouter();
   const {
@@ -84,19 +91,19 @@ export default function DashboardPage() {
 
   const handleUserDataSubmit = (data: UserFormValues) => {
     console.log('User data:', data);
+    setFormData(data);
     setValidStep(1);
   };
-
 
   const handleAuthenticate = async () => {
     setIsLoading(true);
     try {
-      const result = await callRenaperAuth();
+      if (!formData || !user?.wallet) return;
+
+      const result = await callRenaperAuth(formData, user.wallet.address);
       console.log('Authentication result:', result);
-      // Handle successful authentication
     } catch (error) {
       console.error('Authentication failed:', error);
-      // Handle authentication failure
     } finally {
       setIsLoading(false);
     }

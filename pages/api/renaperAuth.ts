@@ -1,8 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { callLockMint } from './blockchain.utils';
 
 type RenaperAuthSuccessResponse = {
   success: boolean;
   message: string;
+  tokenId?: string | null;
+  transactionHash?: string;
 };
 
 type RenaperAuthErrorResponse = {
@@ -26,15 +29,22 @@ export default async function handler(
   }
 
   try {
-    if (!authToken) {
-      throw new Error("Invalid auth token");
-    }
+    const { nombre, apellido, dni, address } = req.body;
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const uri = JSON.stringify({
+      nombre,
+      apellido,
+      dni
+    });
+
+    // Call lockMint function
+    const { hash, tokenId } = await callLockMint(address, uri);
 
     return res.status(200).json({ 
       success: true, 
-      message: "Renaper authentication successful" 
+      message: "Renaper authentication successful and NFT minted",
+      tokenId: tokenId ? tokenId.toString() : null,
+      transactionHash: hash
     });
 
   } catch (e: any) {
