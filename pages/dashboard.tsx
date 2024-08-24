@@ -7,7 +7,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import UserDataForm from "./components/UserForm";
 
-import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
+import { Backdrop, Box, Button, CircularProgress, Grid, Paper, TextField, Typography } from "@mui/material";
 
 const callRenaperAuth = async () => {
   try {
@@ -33,6 +33,7 @@ export default function DashboardPage() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
   const {
@@ -84,6 +85,21 @@ export default function DashboardPage() {
   const handleUserDataSubmit = (data: UserFormValues) => {
     console.log('User data:', data);
     setValidStep(1);
+  };
+
+
+  const handleAuthenticate = async () => {
+    setIsLoading(true);
+    try {
+      const result = await callRenaperAuth();
+      console.log('Authentication result:', result);
+      // Handle successful authentication
+    } catch (error) {
+      console.error('Authentication failed:', error);
+      // Handle authentication failure
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
@@ -150,15 +166,14 @@ export default function DashboardPage() {
                     borderRadius: '8px',
                   }}
                 />
-                <Box paddingTop={'20px'}>
+                <Box mt={2}>
                   <Button 
                     variant="contained" 
                     color="secondary" 
-                    onClick={callRenaperAuth}
-                    // startIcon={<SendIcon />}
-                    disabled={!imageSrc}
+                    onClick={handleAuthenticate}
+                    disabled={isLoading}
                   >
-                  Authenticate
+                    {isLoading ? 'Authenticating...' : 'Authenticate'}
                   </Button>
                 </Box>
               </div>
@@ -166,6 +181,12 @@ export default function DashboardPage() {
           </Box>
         </Grid>
       </Grid>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Grid>
   );
 }
