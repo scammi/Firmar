@@ -2,7 +2,9 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { getAccessToken, usePrivy } from "@privy-io/react-auth";
 import Head from "next/head";
-import { Grid, Paper, Typography } from "@mui/material";
+// import CameraAltIcon from '@mui/icons-material/CameraAlt';
+
+import { Button, Grid, Paper, Typography } from "@mui/material";
 
 async function verifyToken() {
   const url = "/api/verify";
@@ -18,6 +20,10 @@ async function verifyToken() {
 
 export default function DashboardPage() {
   const [verifyResult, setVerifyResult] = useState();
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [imageSrc, setImageSrc] = useState(null);
+
   const router = useRouter();
   const {
     ready,
@@ -34,8 +40,6 @@ export default function DashboardPage() {
 
   const numAccounts = user?.linkedAccounts?.length || 0;
 
-  const videoRef = useRef(null);
-
   useEffect(() => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: true })
@@ -47,6 +51,21 @@ export default function DashboardPage() {
         .catch(err => console.error("Error accessing webcam:", err));
     }
   }, []);
+
+
+  const captureImage = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+
+    if (video && canvas) {
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageDataUrl = canvas.toDataURL('image/jpeg');
+      setImageSrc(imageDataUrl);
+    }
+  };
 
   return (
     <>
@@ -68,11 +87,39 @@ export default function DashboardPage() {
               maxWidth: '640px',
               height: 'auto',
               borderRadius: '8px',
+              marginBottom: '20px',
             }}
           />
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={captureImage}
+            // startIcon={<CameraAltIcon />}
+          >
+            Take Picture
+          </Button>
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
+          {imageSrc && (
+            <div style={{ marginTop: '20px' }}>
+              <Typography variant="h6" gutterBottom>
+                Captured Image
+              </Typography>
+              <img 
+                src={imageSrc} 
+                alt="Captured" 
+                style={{
+                  width: '100%',
+                  maxWidth: '640px',
+                  height: 'auto',
+                  borderRadius: '8px',
+                }}
+              />
+            </div>
+          )}
         </Paper>
       </Grid>
     </Grid>
+
 
       <main className="flex flex-col min-h-screen px-4 sm:px-20 py-6 sm:py-10 bg-privy-light-blue">
         {ready && authenticated ? (
