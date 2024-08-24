@@ -3,8 +3,8 @@ import { avalanche } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 
 // Load environment variables
+export const CONTRACT_ADDRESS = '0x14aF69C94067c72F7B7ccc74E81a6c0FdD7b20Ad';
 const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
-const CONTRACT_ADDRESS = '0xA513C416f2d4774a77E2503DAca8a75F1c5A7B10';
 
 if (!PRIVATE_KEY || !CONTRACT_ADDRESS) {
   throw new Error('Missing environment variables. Please check your .env file.');

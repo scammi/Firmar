@@ -17,13 +17,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
   try {
     const claims = await client.verifyAuthToken(cookieAuthToken);
-    // Use this result to pass props to a page for server rendering or to drive redirects!
-    // ref https://nextjs.org/docs/pages/api-reference/functions/get-server-side-props
     console.log({ claims });
 
     return {
       props: {},
-      redirect: { destination: "/dashboard", permanent: false },
+      redirect: { destination: "/auth", permanent: false },
     };
   } catch (error) {
     return { props: {} };
@@ -33,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useLogin({
-    onComplete: () => router.push("/dashboard"),
+    onComplete: () => router.push("/auth"),
   });
 
   return (
