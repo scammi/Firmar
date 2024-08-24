@@ -2,9 +2,11 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { getAccessToken, usePrivy } from "@privy-io/react-auth";
 import Head from "next/head";
-// import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
 
-import { Button, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 
 async function verifyToken() {
   const url = "/api/verify";
@@ -85,6 +87,11 @@ export default function DashboardPage() {
     }
   };
 
+  const steps = [
+    'Datos',
+    'Renaper',
+  ];
+
   return (
     <Grid container>
       <Head>
@@ -93,6 +100,17 @@ export default function DashboardPage() {
 
       <Grid spacing={2} justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
         <Grid item xs={12} md={8} lg={6}>
+
+          <Box sx={{ width: '100%' }} padding={'20px'}>
+            <Stepper activeStep={0} alternativeLabel>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
+
           <Paper elevation={3} style={{ padding: '20px' }}>
             <Typography variant="h5" gutterBottom>
               Webcam Capture
@@ -146,6 +164,7 @@ export default function DashboardPage() {
               </div>
             )}
         </Grid>
+
       </Grid>
     </Grid>
   );
