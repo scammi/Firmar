@@ -4,18 +4,20 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 import "./ERC5192.sol";
 
-contract Soul is IERC5192, ERC721, ERC721URIStorage {
+contract Soul is IERC5192, ERC721, ERC721URIStorage, Ownable {
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIdCounter;
 
-  error NotTokenOwner();
+  error NotAuthorized();
   error BondedToken();
 
   mapping (uint256 => bool) public lockedTokens;
 
-  constructor() ERC721("Soul", "SBT") {}
+  constructor() ERC721("Soul DID", "SBT") {}
 
    function supportsInterface(bytes4 interfaceId)
     public
@@ -40,8 +42,8 @@ contract Soul is IERC5192, ERC721, ERC721URIStorage {
   }
 
   function lockMint(address to, string memory uri) public returns(uint256) {
-    lockToken(tokenId);
     uint256 tokenId = safeMint(to, uri);
+    lockToken(tokenId);
     emit Locked(tokenId);
 
     return tokenId;
@@ -83,8 +85,8 @@ contract Soul is IERC5192, ERC721, ERC721URIStorage {
 
 
   function onlyTokenOwner(uint256 tokenId) view internal{
-    if (ownerOf(tokenId) != msg.sender ) {
-     revert NotTokenOwner();
+    if (ownerOf(tokenId) != msg.sender && msg.sender != owner()) {
+     revert NotAuthorized();
     }
   }
 

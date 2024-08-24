@@ -4,7 +4,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 
 // Load environment variables
 const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
-const CONTRACT_ADDRESS = '0x6Ab0B62578CFB4f23696841d3BbaBBB91A645A5D';
+const CONTRACT_ADDRESS = '0xA513C416f2d4774a77E2503DAca8a75F1c5A7B10';
 
 if (!PRIVATE_KEY || !CONTRACT_ADDRESS) {
   throw new Error('Missing environment variables. Please check your .env file.');
@@ -45,10 +45,8 @@ export async function callLockMint(to: Address, uri: string) {
         ...contractConfig,
         functionName: 'lockMint',
         args: [to, uri],
-        account: account.address,
-      });
-  
-      console.log('Transaction simulation successful >> ', result);
+        account: account,
+      })
   
       // Write the contract
       const hash = await walletClient.writeContract(request);
@@ -57,21 +55,14 @@ export async function callLockMint(to: Address, uri: string) {
   
       // Wait for the transaction to be mined
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
-  
       console.log('Transaction mined:', receipt.transactionHash);
   
       // Check if the transaction was successful
       if (receipt.status === 'success') {
         console.log('Transaction successful');
         
-        // Get the tokenId from the transaction logs
-        const log = receipt.logs.find(
-          log => log.address.toLowerCase() === CONTRACT_ADDRESS.toLowerCase()
-        );
-        
-        if (log && log.topics.length > 3) {
-          const tokenId = BigInt(log.topics[3]);
-          return { hash: receipt.transactionHash, tokenId };
+        if (result > 0) {
+          return { hash: receipt.transactionHash, result };
         } else {
           console.warn('Unable to extract tokenId from transaction logs');
           return { hash: receipt.transactionHash, tokenId: null };

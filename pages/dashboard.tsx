@@ -26,7 +26,9 @@ const callRenaperAuth = async (formData: UserFormValues, userAddress: string) =>
     });
 
     const result = await response.json();
+
     console.log(result);
+
     return result;
   } catch (error) {
     console.error('Error calling renaperAuth:', error);
@@ -101,14 +103,16 @@ export default function DashboardPage() {
       if (!formData || !user?.wallet) return;
 
       const result = await callRenaperAuth(formData, user.wallet.address);
+      
       console.log('Authentication result:', result);
+
     } catch (error) {
       console.error('Authentication failed:', error);
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <Grid container>
       <Head>
