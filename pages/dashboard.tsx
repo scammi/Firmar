@@ -8,18 +8,6 @@ import StepLabel from '@mui/material/StepLabel';
 
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 
-async function verifyToken() {
-  const url = "/api/verify";
-  const accessToken = await getAccessToken();
-  const result = await fetch(url, {
-    headers: {
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined),
-    },
-  });
-
-  return await result.json();
-}
-
 const callRenaperAuth = async () => {
   try {
     const accessToken = await getAccessToken(); // You need to implement this function
@@ -59,7 +47,6 @@ export default function DashboardPage() {
     }
   }, [ready, authenticated, router]);
 
-
   useEffect(() => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: true })
@@ -92,6 +79,68 @@ export default function DashboardPage() {
     'Renaper',
   ];
 
+  const ActiveTab = () => {
+    switch (activeStep) {
+      case 0: return <>Form</>;
+      case 1: return (
+        <Paper elevation={3} style={{ padding: '20px' }}>
+        <Typography variant="h5" gutterBottom>
+          Webcam Capture
+        </Typography>
+        <video
+          ref={videoRef}
+          autoPlay
+          style={{
+            width: '100%',
+            maxWidth: '640px',
+            height: 'auto',
+            borderRadius: '8px',
+            marginBottom: '20px',
+          }}
+        />
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={captureImage}
+          // startIcon={<CameraAltIcon />}
+        >
+          Take Picture
+        </Button>
+        <canvas ref={canvasRef} style={{ display: 'none' }} />
+        {imageSrc && (
+          <div style={{ marginTop: '20px' }}>
+            <Typography variant="h6" gutterBottom>
+              Captured Image
+            </Typography>
+            <img 
+              src={imageSrc} 
+              alt="Captured" 
+              style={{
+                width: '100%',
+                maxWidth: '640px',
+                height: 'auto',
+                borderRadius: '8px',
+              }}
+            />
+            <Box paddingTop={'20px'}>
+              <Button 
+                variant="contained" 
+                color="secondary" 
+                onClick={callRenaperAuth}
+                // startIcon={<SendIcon />}
+                disabled={!imageSrc}
+              >
+              Authenticate
+              </Button>
+            </Box>
+         </div>
+        )}
+      </Paper>
+      );
+      default: return <></>;
+    }
+  }
+
   return (
     <Grid container>
       <Head>
@@ -110,64 +159,8 @@ export default function DashboardPage() {
               ))}
             </Stepper>
           </Box>
-          {
-
-          }
-          <Paper elevation={3} style={{ padding: '20px' }}>
-            <Typography variant="h5" gutterBottom>
-              Webcam Capture
-            </Typography>
-            <video
-              ref={videoRef}
-              autoPlay
-              style={{
-                width: '100%',
-                maxWidth: '640px',
-                height: 'auto',
-                borderRadius: '8px',
-                marginBottom: '20px',
-              }}
-            />
-            <Button 
-              variant="contained" 
-              color="primary" 
-              onClick={captureImage}
-              // startIcon={<CameraAltIcon />}
-            >
-              Take Picture
-            </Button>
-            <canvas ref={canvasRef} style={{ display: 'none' }} />
-            {imageSrc && (
-              <div style={{ marginTop: '20px' }}>
-                <Typography variant="h6" gutterBottom>
-                  Captured Image
-                </Typography>
-                <img 
-                  src={imageSrc} 
-                  alt="Captured" 
-                  style={{
-                    width: '100%',
-                    maxWidth: '640px',
-                    height: 'auto',
-                    borderRadius: '8px',
-                  }}
-                />
-                <Box paddingTop={'20px'}>
-                  <Button 
-                    variant="contained" 
-                    color="secondary" 
-                    onClick={callRenaperAuth}
-                    // startIcon={<SendIcon />}
-                    disabled={!imageSrc}
-                  >
-                  Authenticate
-                  </Button>
-                </Box>
-             </div>
-            )}
-          </Paper>
+          <ActiveTab />
         </Grid>
-
       </Grid>
     </Grid>
   );
