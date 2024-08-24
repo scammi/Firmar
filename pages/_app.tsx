@@ -2,6 +2,12 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { PrivyProvider } from "@privy-io/react-auth";
+import { avalanche } from 'viem/chains'
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -43,6 +49,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <PrivyProvider
         appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ""}
         config={{
+          defaultChain: avalanche,
           embeddedWallets: {
             createOnLogin: "all-users",
           },
@@ -53,5 +60,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     </>
   );
 }
+
 
 export default MyApp;
