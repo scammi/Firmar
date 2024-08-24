@@ -5,8 +5,9 @@ import Head from "next/head";
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
+import UserDataForm from "./components/UserForm";
 
-import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
 
 const callRenaperAuth = async () => {
   try {
@@ -28,7 +29,7 @@ const callRenaperAuth = async () => {
 };
 
 export default function DashboardPage() {
-  const [activeStep, setValidStep] = useState(1);
+  const [activeStep, setValidStep] = useState(0);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
@@ -57,7 +58,7 @@ export default function DashboardPage() {
         })
         .catch(err => console.error("Error accessing webcam:", err));
     }
-  }, []);
+  }, [activeStep]);
 
 
   const captureImage = () => {
@@ -80,14 +81,11 @@ export default function DashboardPage() {
     'Renaper',
   ];
 
-  const ActiveTab = () => {
-    switch (activeStep) {
-      case 0: return <>Form</>;
-      case 1: return <VideoFeed/>;
-      default: return <></>;
-    }
-  }
-
+  const handleUserDataSubmit = (data: UserFormValues) => {
+    console.log('User data:', data);
+    setValidStep(1);
+  };
+  
   return (
     <Grid container>
       <Head>
@@ -105,31 +103,37 @@ export default function DashboardPage() {
               ))}
             </Stepper>
           </Box>
-          <Paper elevation={3} style={{ padding: '20px' }}>
-            <Typography variant="h5" gutterBottom>
-              Webcam Capture
-            </Typography>
-            <video
-              ref={videoRef}
-              autoPlay
-              style={{
-                width: '100%',
-                maxWidth: '640px',
-                height: 'auto',
-                borderRadius: '8px',
-                marginBottom: '20px',
-              }}
-            />
-            <Button 
-              variant="contained" 
-              color="primary" 
-              onClick={captureImage}
-              // startIcon={<CameraAltIcon />}
-            >
-              Take Picture
-            </Button>
-            <canvas ref={canvasRef} style={{ display: 'none' }} />
-          </Paper> 
+          {activeStep == 0 && (
+            <UserDataForm onSubmit={handleUserDataSubmit} />
+          )}
+          {activeStep == 1 && (
+            <Paper elevation={3} style={{ padding: '20px' }}>
+              <Typography variant="h5" gutterBottom>
+                Webcam Capture
+              </Typography>
+              <video
+                ref={videoRef}
+                autoPlay
+                style={{
+                  width: '100%',
+                  maxWidth: '640px',
+                  height: 'auto',
+                  borderRadius: '8px',
+                  marginBottom: '20px',
+                }}
+              />
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={captureImage}
+                // startIcon={<CameraAltIcon />}
+              >
+                Take Picture
+              </Button>
+              <canvas ref={canvasRef} style={{ display: 'none' }} />
+            </Paper> 
+            )
+          }
           <Box style={{ padding: '20px' }}>
             {imageSrc && (
               <div style={{ marginTop: '20px' }}>
