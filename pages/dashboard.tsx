@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getAccessToken, usePrivy } from "@privy-io/react-auth";
 import Head from "next/head";
 import Stepper from '@mui/material/Stepper';
@@ -70,6 +70,7 @@ export default function DashboardPage() {
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       const imageDataUrl = canvas.toDataURL('image/jpeg');
+      // console.log(imageDataUrl)
       setImageSrc(imageDataUrl);
     }
   };
@@ -78,64 +79,6 @@ export default function DashboardPage() {
     'Datos',
     'Renaper',
   ];
-
-  const VideoFeed = () => {
-    return (
-      <Paper elevation={3} style={{ padding: '20px' }}>
-        <Typography variant="h5" gutterBottom>
-          Webcam Capture
-        </Typography>
-        <video
-          ref={videoRef}
-          autoPlay
-          style={{
-            width: '100%',
-            maxWidth: '640px',
-            height: 'auto',
-            borderRadius: '8px',
-            marginBottom: '20px',
-          }}
-        />
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={captureImage}
-          // startIcon={<CameraAltIcon />}
-        >
-          Take Picture
-        </Button>
-        <canvas ref={canvasRef} style={{ display: 'none' }} />
-        {imageSrc && (
-          <div style={{ marginTop: '20px' }}>
-            <Typography variant="h6" gutterBottom>
-              Captured Image
-            </Typography>
-            <img 
-              src={imageSrc} 
-              alt="Captured" 
-              style={{
-                width: '100%',
-                maxWidth: '640px',
-                height: 'auto',
-                borderRadius: '8px',
-              }}
-            />
-            <Box paddingTop={'20px'}>
-              <Button 
-                variant="contained" 
-                color="secondary" 
-                onClick={callRenaperAuth}
-                // startIcon={<SendIcon />}
-                disabled={!imageSrc}
-              >
-              Authenticate
-              </Button>
-            </Box>
-        </div>
-        )}
-      </Paper>
-    )
-  }
 
   const ActiveTab = () => {
     switch (activeStep) {
@@ -153,7 +96,6 @@ export default function DashboardPage() {
 
       <Grid  justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
         <Grid item xs={12} md={8} lg={6}>
-
           <Box sx={{ width: '100%' }} padding={'20px'}>
             <Stepper activeStep={activeStep} alternativeLabel>
               {steps.map((label) => (
@@ -163,7 +105,61 @@ export default function DashboardPage() {
               ))}
             </Stepper>
           </Box>
-          <ActiveTab />
+          <Paper elevation={3} style={{ padding: '20px' }}>
+            <Typography variant="h5" gutterBottom>
+              Webcam Capture
+            </Typography>
+            <video
+              ref={videoRef}
+              autoPlay
+              style={{
+                width: '100%',
+                maxWidth: '640px',
+                height: 'auto',
+                borderRadius: '8px',
+                marginBottom: '20px',
+              }}
+            />
+            <Button 
+              variant="contained" 
+              color="primary" 
+              onClick={captureImage}
+              // startIcon={<CameraAltIcon />}
+            >
+              Take Picture
+            </Button>
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
+          </Paper> 
+          <Box style={{ padding: '20px' }}>
+            {imageSrc && (
+              <div style={{ marginTop: '20px' }}>
+                <Typography variant="h6" gutterBottom>
+                  Captured Image
+                </Typography>
+                <img 
+                  src={imageSrc} 
+                  alt="Captured" 
+                  style={{
+                    width: '100%',
+                    maxWidth: '640px',
+                    height: 'auto',
+                    borderRadius: '8px',
+                  }}
+                />
+                <Box paddingTop={'20px'}>
+                  <Button 
+                    variant="contained" 
+                    color="secondary" 
+                    onClick={callRenaperAuth}
+                    // startIcon={<SendIcon />}
+                    disabled={!imageSrc}
+                  >
+                  Authenticate
+                  </Button>
+                </Box>
+              </div>
+            )}
+          </Box>
         </Grid>
       </Grid>
     </Grid>
