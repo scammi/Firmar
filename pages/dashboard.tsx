@@ -18,6 +18,32 @@ async function verifyToken() {
   return await result.json();
 }
 
+const callRenaperAuth = async () => {
+  // if (!imageSrc) {
+  //   alert('Please capture an image first');
+  //   return;
+  // }
+
+  try {
+    const accessToken = await getAccessToken(); // You need to implement this function
+    const response = await fetch('/api/renaperAuth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      },
+      // body: JSON.stringify({ image: imageSrc }),
+    });
+
+    const result = await response.json();
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error('Error calling renaperAuth:', error);
+  }
+};
+
+
 export default function DashboardPage() {
   const [verifyResult, setVerifyResult] = useState();
   const videoRef = useRef(null);
@@ -38,7 +64,6 @@ export default function DashboardPage() {
     }
   }, [ready, authenticated, router]);
 
-  const numAccounts = user?.linkedAccounts?.length || 0;
 
   useEffect(() => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -99,7 +124,8 @@ export default function DashboardPage() {
             Take Picture
           </Button>
           <canvas ref={canvasRef} style={{ display: 'none' }} />
-          {imageSrc && (
+        </Paper>
+        {imageSrc && (
             <div style={{ marginTop: '20px' }}>
               <Typography variant="h6" gutterBottom>
                 Captured Image
@@ -114,9 +140,18 @@ export default function DashboardPage() {
                   borderRadius: '8px',
                 }}
               />
+            <Button 
+              variant="contained" 
+              color="secondary" 
+              onClick={callRenaperAuth}
+              // startIcon={<SendIcon />}
+              disabled={!imageSrc}
+            >
+            Authenticate
+          </Button>
+
             </div>
           )}
-        </Paper>
       </Grid>
     </Grid>
 
