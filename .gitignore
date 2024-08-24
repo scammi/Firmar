@@ -103,3 +103,15 @@ dist
 
 # TernJS port file
 .tern-port
+
+./SoulBoundNFT/node_modules
+./SoulBoundNFT/.env
+./SoulBoundNFT/coverage
+./SoulBoundNFT/coverage.json
+./SoulBoundNFT/typechain
+./SoulBoundNFT/typechain-types
+
+#Hardhat files
+./SoulBoundNFT/cache
+./SoulBoundNFT/artifacts
+
