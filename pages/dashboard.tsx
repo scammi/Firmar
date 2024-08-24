@@ -1,13 +1,11 @@
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getAccessToken, usePrivy } from "@privy-io/react-auth";
-import Head from "next/head";
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
 import UserDataForm, { UserFormValues } from "./components/UserForm";
-
-import { Backdrop, Box, Button, CircularProgress, Grid, Paper, TextField, Typography } from "@mui/material";
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { Backdrop, Box, Button, CircularProgress, Grid, Paper, Step, StepLabel, Stepper, Typography } from "@mui/material";
+import Head from 'next/head';
 
 const callRenaperAuth = async (formData: UserFormValues, userAddress: string) => {
   try {
@@ -42,7 +40,7 @@ export default function DashboardPage() {
   const [imageSrc, setImageSrc] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<UserFormValues>();
-
+  const [authStatus, setAuthStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const router = useRouter();
   const {
@@ -104,12 +102,18 @@ export default function DashboardPage() {
 
       const result = await callRenaperAuth(formData, user.wallet.address);
       
-      console.log('Authentication result:', result);
-
-    } catch (error) {
+      if (result.success) {
+        setAuthStatus('success');
+      } else {
+        setAuthStatus('error');
+      }
+  } catch (error) {
+      setAuthStatus('error');
       console.error('Authentication failed:', error);
     } finally {
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000); 
     }
   };
 
@@ -177,16 +181,23 @@ export default function DashboardPage() {
                     borderRadius: '8px',
                   }}
                 />
-                <Box mt={2}>
-                  <Button 
-                    variant="contained" 
-                    color="secondary" 
-                    onClick={handleAuthenticate}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? 'Authenticating...' : 'Authenticate'}
-                  </Button>
-                </Box>
+                <Box mt={2} display="flex" alignItems="center">
+                    <Button 
+                      variant="contained" 
+                      color="secondary" 
+                      onClick={handleAuthenticate}
+                      disabled={isLoading || authStatus !== 'idle'}
+                      style={{ marginRight: '10px' }}
+                    >
+                      {isLoading ? 'Authenticating...' : 'Authenticate'}
+                    </Button>
+                    {/* {authStatus === 'success' && (
+                      <CheckCircleOutlineIcon color="success" fontSize="large" />
+                    )}
+                    {authStatus === 'error' && (
+                      <ErrorOutlineIcon color="error" fontSize="large" />
+                    )} */}
+                  </Box>
               </div>
             )}
           </Box>
@@ -196,7 +207,15 @@ export default function DashboardPage() {
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={isLoading}
       >
-        <CircularProgress color="inherit" />
+        {authStatus === 'success' && (
+          <CheckCircleOutlineIcon color="success" fontSize="large" />
+        )}
+        {authStatus === 'error' && (
+          <ErrorOutlineIcon color="error" fontSize="large" />
+        )}
+        {(authStatus !== 'success' &&  authStatus !== 'error') && (
+          <CircularProgress color="inherit" />
+        )}
       </Backdrop>
     </Grid>
   );
