@@ -1,3 +1,4 @@
+// @ts-nocheck
 const { expect } = require("chai");
 
 describe('Soul', () => {
@@ -13,7 +14,7 @@ describe('Soul', () => {
   });
 
   it ('Should deploy', async () => {
-    expect(await soul.name()).to.equal('Soul')
+    expect(await soul.name()).to.equal('Soul DID')
   });
 
   it ('Mints one NFT and transfer', async () => {
@@ -60,7 +61,7 @@ describe('Soul', () => {
     const mintTx = await soul.safeMint(signer.address, 'www.test.com/1');
     await mintTx.wait()
 
-    await expect(soul.connect(user1).lockToken('1')).to.revertedWithCustomError(soul, 'NotTokenOwner');
+    await expect(soul.connect(user1).lockToken('1')).to.revertedWithCustomError(soul, 'NotAuthorized');
 
     const lockTx = await soul.lockToken('1');
     await lockTx.wait();
@@ -74,7 +75,7 @@ describe('Soul', () => {
 
     expect(await soul.balanceOf(signer.address)).to.be.equal(1);
 
-    await expect(soul.connect(user1).burn('1')).to.revertedWithCustomError(soul, 'NotTokenOwner');
+    await expect(soul.connect(user1).burn('1')).to.revertedWithCustomError(soul, 'NotAuthorized');
     expect(await soul.balanceOf(signer.address)).to.be.equal(1);
 
     const burnTx = await soul.connect(signer).burn('1');
@@ -82,4 +83,26 @@ describe('Soul', () => {
 
     expect(await soul.balanceOf(signer.address)).to.be.equal(0);
   });
+
+  it("Retrieves metadata by address correctly", async() => {
+    await soul.safeMint(user1.address, 'ipfs://test.com/1');
+    expect(await soul.getMetadataByAddress(user1.address)).to.equal('ipfs://test.com/1');
+  });
+
+  it("Fails to retrieve metadata for address without token", async() => {
+    await expect(soul.getMetadataByAddress(user1.address))
+      .to.be.revertedWith("Address does not own a Soul token");
+  });
+
+  it("Records token ownership correctly", async() => {
+    await soul.safeMint(user1.address, 'ipfs://test.com/1');
+    expect(await soul.addressToTokenId(user1.address)).to.equal(1);
+  });
+
+  it("Prevents minting more than one token per address", async() => {
+    await soul.safeMint(user1.address, 'ipfs://test.com/1');
+    await expect(soul.safeMint(user1.address, 'ipfs://test.com/2'))
+      .to.be.revertedWithCustomError(soul, 'AlreadyOwnsSoul');
+  });
+
 });

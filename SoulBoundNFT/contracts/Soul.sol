@@ -14,8 +14,10 @@ contract Soul is IERC5192, ERC721, ERC721URIStorage, Ownable {
 
   error NotAuthorized();
   error BondedToken();
+  error AlreadyOwnsSoul();
 
   mapping (uint256 => bool) public lockedTokens;
+  mapping (address => uint256) public addressToTokenId;
 
   constructor() ERC721("Soul DID", "SBT") {}
 
@@ -33,10 +35,18 @@ contract Soul is IERC5192, ERC721, ERC721URIStorage, Ownable {
   }
 
   function safeMint(address to, string memory uri) public returns(uint256) {
+    if (addressToTokenId[to] != 0) {
+      revert AlreadyOwnsSoul();
+    }
+
     _tokenIdCounter.increment();
+
     uint256 tokenId = _tokenIdCounter.current();
+
     _safeMint(to, tokenId);
     _setTokenURI(tokenId, uri);
+
+    addressToTokenId[to] = tokenId;
 
     return tokenId;
   }
@@ -78,8 +88,17 @@ contract Soul is IERC5192, ERC721, ERC721URIStorage, Ownable {
     return super.tokenURI(tokenId);
   }
 
+  function getMetadataByAddress(address userAddress) public view returns (string memory) {
+    uint256 tokenId = addressToTokenId[userAddress];
+    require(tokenId != 0, "Address does not own a Soul token");
+    return tokenURI(tokenId);
+  }
+
   function burn(uint256 tokenId) public {
     onlyTokenOwner(tokenId); 
+    address owner = ownerOf(tokenId);
+    delete addressToTokenId[owner];
+
     _burn(tokenId);
   }
 
