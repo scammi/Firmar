@@ -26,16 +26,12 @@ export default async function handler(
   }
 
   try {
-    // Here you would typically verify the auth token
-    // For this example, we'll just check if it exists
     if (!authToken) {
       throw new Error("Invalid auth token");
     }
 
-    // Simulating the Renaper authentication process
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Always return success for this example
     return res.status(200).json({ 
       success: true, 
       message: "Renaper authentication successful" 
