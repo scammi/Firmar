@@ -28,7 +28,7 @@ const callRenaperAuth = async () => {
 };
 
 export default function DashboardPage() {
-  const [activeStep, setValidStep] = useState(0);
+  const [activeStep, setValidStep] = useState(1);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
@@ -79,11 +79,9 @@ export default function DashboardPage() {
     'Renaper',
   ];
 
-  const ActiveTab = () => {
-    switch (activeStep) {
-      case 0: return <>Form</>;
-      case 1: return (
-        <Paper elevation={3} style={{ padding: '20px' }}>
+  const VideoFeed = () => {
+    return (
+      <Paper elevation={3} style={{ padding: '20px' }}>
         <Typography variant="h5" gutterBottom>
           Webcam Capture
         </Typography>
@@ -133,10 +131,16 @@ export default function DashboardPage() {
               Authenticate
               </Button>
             </Box>
-         </div>
+        </div>
         )}
       </Paper>
-      );
+    )
+  }
+
+  const ActiveTab = () => {
+    switch (activeStep) {
+      case 0: return <>Form</>;
+      case 1: return <VideoFeed/>;
       default: return <></>;
     }
   }
@@ -147,7 +151,7 @@ export default function DashboardPage() {
         <title>Simple</title>
       </Head>
 
-      <Grid spacing={2} justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
+      <Grid  justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
         <Grid item xs={12} md={8} lg={6}>
 
           <Box sx={{ width: '100%' }} padding={'20px'}>
