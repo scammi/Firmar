@@ -44,7 +44,8 @@ const UserDataForm: React.FC<UserDataFormProps> = ({ onSubmit }) => {
         elevation={3} 
         sx={{ 
           padding: isMobile ? 3 : 4, 
-          width: '100%', 
+          width: '100%',  
+          maxHeight: '20%',
           maxWidth: 400,
           borderRadius: 2
         }}

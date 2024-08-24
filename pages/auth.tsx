@@ -4,7 +4,7 @@ import { getAccessToken, usePrivy } from "@privy-io/react-auth";
 import UserDataForm, { UserFormValues } from "./components/UserForm";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { Backdrop, Box, Button, CircularProgress, Grid, Paper, Step, StepLabel, Stepper, Typography } from "@mui/material";
+import { Backdrop, Box, Button, CircularProgress, Grid, Paper, Step, StepLabel, Stepper, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from 'next/head';
 
 const callRenaperAuth = async (formData: UserFormValues, userAddress: string) => {
@@ -40,7 +40,10 @@ export default function DashboardPage() {
   const [imageSrc, setImageSrc] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<UserFormValues>();
+  const [cameraReady, setCameraReady] = useState(false);
   const [authStatus, setAuthStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const router = useRouter();
   const {
@@ -56,17 +59,21 @@ export default function DashboardPage() {
     }
   }, [ready, authenticated, router]);
 
+
   useEffect(() => {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    if (activeStep === 1 && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => {
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
+            videoRef.current.onloadedmetadata = () => {
+              setCameraReady(true);
+            };
           }
         })
         .catch(err => console.error("Error accessing webcam:", err));
     }
-  }, [activeStep]);
+  }, [activeStep])
 
 
   const captureImage = () => {
@@ -120,103 +127,138 @@ export default function DashboardPage() {
     }
   };
 
+  if (!ready || !authenticated) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+
   return (
-    <Grid container>
+    <Grid container justifyContent="center" style={{ minHeight: '100vh' }}>
       <Head>
-        <title>Simple</title>
+        <title>Authentication - Soul DID</title>
       </Head>
 
-      <Grid  justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
-        <Grid item xs={12} md={8} lg={6}>
-          <Box sx={{ width: '100%' }} padding={'20px'}>
-            <Stepper activeStep={activeStep} alternativeLabel>
-              {steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-          </Box>
-          {activeStep == 0 && (
-            <UserDataForm onSubmit={handleUserDataSubmit} />
-          )}
-          {activeStep == 1 && (
-            <Paper elevation={3} style={{ padding: '20px' }}>
-              <Typography variant="h5" gutterBottom>
-                Webcam Capture
-              </Typography>
-              <video
-                ref={videoRef}
-                autoPlay
-                style={{
-                  width: '100%',
-                  maxWidth: '640px',
-                  height: 'auto',
-                  borderRadius: '8px',
-                  marginBottom: '20px',
-                }}
-              />
-              <Button 
-                variant="contained" 
-                color="primary" 
-                onClick={captureImage}
-                // startIcon={<CameraAltIcon />}
-              >
-                Take Picture
-              </Button>
-              <canvas ref={canvasRef} style={{ display: 'none' }} />
-            </Paper> 
-            )
-          }
-          <Box style={{ padding: '20px' }}>
+      <Grid item xs={12} sm={10} md={8} lg={6}>
+        <Box sx={{ width: '100%', padding: isMobile ? 2 : 4 }}>
+          <Stepper activeStep={activeStep} alternativeLabel>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+
+          <Box mt={4}>
+            {activeStep === 0 && (
+              <UserDataForm onSubmit={handleUserDataSubmit} />
+            )}
+            
+            {activeStep === 1 && (
+              <Paper elevation={3} style={{ padding: '20px' }}>
+                <Typography variant="h5" gutterBottom>
+                  Webcam Capture
+                </Typography>
+                {!cameraReady && (
+                  <Box display="flex" justifyContent="center" alignItems="center" height={300}>
+                    <CircularProgress />
+                  </Box>
+                )}
+                <Box
+                  sx={{
+                    position: 'relative',
+                    width: '100%',
+                    paddingTop: '75%', // 4:3 aspect ratio
+                    overflow: 'hidden',
+                    borderRadius: '8px',
+                    marginBottom: '20px',
+                    display: cameraReady ? 'block' : 'none',
+                  }}
+                >
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                </Box>
+                <Button 
+                  variant="contained" 
+                  color="primary" 
+                  onClick={captureImage}
+                  disabled={!cameraReady}
+                  fullWidth
+                >
+                  Take Picture
+                </Button>
+                <canvas ref={canvasRef} style={{ display: 'none' }} />
+              </Paper> 
+            )}
+
             {imageSrc && (
-              <div style={{ marginTop: '20px' }}>
+              <Box mt={4}>
                 <Typography variant="h6" gutterBottom>
                   Captured Image
                 </Typography>
-                <img 
-                  src={imageSrc} 
-                  alt="Captured" 
-                  style={{
+                <Box
+                  sx={{
                     width: '100%',
-                    maxWidth: '640px',
-                    height: 'auto',
+                    paddingTop: '75%', // 4:3 aspect ratio
+                    position: 'relative',
+                    overflow: 'hidden',
                     borderRadius: '8px',
+                    marginBottom: '20px',
                   }}
-                />
-                <Box mt={2} display="flex" alignItems="center">
-                    <Button 
-                      variant="contained" 
-                      color="secondary" 
-                      onClick={handleAuthenticate}
-                      disabled={isLoading || authStatus !== 'idle'}
-                      style={{ marginRight: '10px' }}
-                    >
-                      {isLoading ? 'Authenticating...' : 'Authenticate'}
-                    </Button>
-                    {/* {authStatus === 'success' && (
-                      <CheckCircleOutlineIcon color="success" fontSize="large" />
-                    )}
-                    {authStatus === 'error' && (
-                      <ErrorOutlineIcon color="error" fontSize="large" />
-                    )} */}
-                  </Box>
-              </div>
+                >
+                  <img 
+                    src={imageSrc} 
+                    alt="Captured" 
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                </Box>
+                <Button 
+                  variant="contained" 
+                  color="secondary" 
+                  onClick={handleAuthenticate}
+                  disabled={isLoading || authStatus !== 'idle'}
+                  fullWidth
+                >
+                  {isLoading ? 'Authenticating...' : 'Authenticate'}
+                </Button>
+              </Box>
             )}
           </Box>
-        </Grid>
+        </Box>
       </Grid>
+
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={isLoading}
       >
         {authStatus === 'success' && (
-          <CheckCircleOutlineIcon color="success" fontSize="large" />
+          <CheckCircleOutlineIcon color="success" style={{ fontSize: 60 }} />
         )}
         {authStatus === 'error' && (
-          <ErrorOutlineIcon color="error" fontSize="large" />
+          <ErrorOutlineIcon color="error" style={{ fontSize: 60 }} />
         )}
-        {(authStatus !== 'success' &&  authStatus !== 'error') && (
+        {authStatus === 'idle' && (
           <CircularProgress color="inherit" />
         )}
       </Backdrop>
