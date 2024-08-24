@@ -45,9 +45,8 @@ export default function DashboardPage() {
   const [authStatus, setAuthStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const { hasNFT, isLoading: isUseNFTLoging } = useNFTStatus();
   const router = useRouter();
+  const { hasNFT, isLoading: isUseNFTLoging } = useNFTStatus();
 
   const {
     ready,
@@ -143,7 +142,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (!ready || !authenticated || !isUseNFTLoging) {
+  if (!ready || !authenticated || isUseNFTLoging) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
         <CircularProgress />

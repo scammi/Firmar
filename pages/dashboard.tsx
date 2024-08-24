@@ -105,7 +105,6 @@ export default function Dashboard() {
           <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
             <Typography variant="h6" gutterBottom>Your Soul Token Metadata</Typography>
             <Typography><strong>Name:</strong> {metadata?.nombre || 'N/A'}</Typography>
-            {/* <Typography><strong>Last Name:</strong> {metadata?.apellido || 'N/A'}</Typography> */}
             <Typography><strong>DNI:</strong> {metadata?.dni || 'N/A'}</Typography>
           </Paper>
           <Grid container spacing={2}>
@@ -122,7 +121,7 @@ export default function Dashboard() {
             <Grid item xs={12} sm={6}>
               <Card>
                 <CardContent>
-                  <Box display="flex" alignItems="center">
+                  <Box display="flex" alignItems="center" onClick={() => router.push("/sign")}>
                     <DescriptionIcon color="primary" sx={{ fontSize: 40, marginRight: 2 }} />
                     <Typography variant="h6">Sign Documents</Typography>
                   </Box>
