@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { usePrivy } from "@privy-io/react-auth";
-import { Box, Typography, CircularProgress, Paper, Grid, CardContent, Card, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Typography, CircularProgress, Paper, Grid, CardContent, Card, useMediaQuery, useTheme, Collapse, Link, Button, Table, TableBody, TableCell, TableRow } from '@mui/material';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { createPublicClient, http, getContract } from 'viem';
@@ -20,6 +20,7 @@ export default function Dashboard() {
   const [metadata, setMetadata] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
   const theme = useTheme();
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -105,9 +106,6 @@ export default function Dashboard() {
         <Head>
           <title>Dashboard - Soul DID</title>
         </Head>
-        <Typography variant="h4" gutterBottom align="center">
-          Dashboard
-        </Typography>
         {isLoading ? (
           <Box display="flex" justifyContent="center" minHeight="50vh">
             <CircularProgress />
@@ -116,12 +114,52 @@ export default function Dashboard() {
           <Typography color="error" align="center">{error}</Typography>
         ) : (
           <>
-            <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
-              <Typography variant="h6" gutterBottom>Your Soul Token Metadata</Typography>
-              <Typography><strong>Name:</strong> {metadata?.nombre || 'N/A'}</Typography>
-              <Typography><strong>DNI:</strong> {metadata?.dni || 'N/A'}</Typography>
-              <Typography><strong>Signature CID:</strong> {formatSignatureCid(metadata?.signatureCid)}</Typography>
-            </Paper>
+            <Card elevation={3} sx={{ marginBottom: 3, bgcolor: '#fff9e6' }}>
+              <CardContent>
+                <Typography variant="h5" gutterBottom color="primary" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}>
+                  Your Soul Token Metadata
+                </Typography>
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell component="th" scope="row" sx={{ fontWeight: 'bold', color: '#555' }}>Name:</TableCell>
+                      <TableCell align="right">{metadata?.nombre || 'N/A'}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th" scope="row" sx={{ fontWeight: 'bold', color: '#555' }}>DNI:</TableCell>
+                      <TableCell align="right">{metadata?.dni || 'N/A'}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th" scope="row" sx={{ fontWeight: 'bold', color: '#555' }}>Signature CID:</TableCell>
+                      <TableCell align="right">{formatSignatureCid(metadata?.signatureCid)}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+                  <Link href="#" color="secondary" sx={{ textDecoration: 'none' }}>
+                    View Wallet/Mint Transaction
+                  </Link>
+                  <Button
+                    onClick={() => setExpanded(!expanded)}
+                    color="primary"
+                    variant="outlined"
+                    size="small"
+                  >
+                    View Signature
+                  </Button>
+                </Box>
+                <Collapse in={expanded}>
+                  <Box sx={{ mt: 2, maxWidth: '100%', height: 'auto' }}>
+                    <img
+                      src={`https://ipfs.io/ipfs/${metadata?.signatureCid}`}
+                      alt="Signature"
+                      style={{ maxWidth: '100%', height: 'auto', borderRadius: '4px' }}
+                    />
+                  </Box>
+                </Collapse>
+              </CardContent>
+            </Card>
+
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <Card>

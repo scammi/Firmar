@@ -59,12 +59,6 @@ export default function Sign() {
           Sign Document
         </Typography>
         <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
-          <Typography variant="h6" gutterBottom>Your Information</Typography>
-          <Typography><strong>Name:</strong> {userData.name}</Typography>
-          <Typography><strong>DNI:</strong> {userData.dni}</Typography>
-          <Typography><strong>Signature CID:</strong> {formatSignatureCid(userData.signatureCid)}</Typography>
-        </Paper>
-        <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
           <DocusealForm
             src="https://docuseal.co/d/HyANjgot2ow9dn"
             email="signer@example.com"
@@ -72,9 +66,7 @@ export default function Sign() {
             onComplete={handleDocusealComplete}
           />
         </Paper>
-        {isLoading ? (
-          <CircularProgress />
-        ) : signatureHash && (
+        {signatureHash && (
           <Paper elevation={3} sx={{ padding: 3 }}>
             <Typography variant="h4" gutterBottom>Document Signature Hash</Typography>
             <Tooltip title={signatureHash} placement="top" arrow>
