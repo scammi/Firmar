@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik, Form, Field, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-import { Button, TextField, Box, Typography, useMediaQuery, useTheme, Paper } from '@mui/material';
+import { Button, TextField, Box, Typography, useMediaQuery, useTheme, Paper, Input } from '@mui/material';
 
 export interface UserFormValues {
   name: string;
   idNumber: string;
+  signatureCid?: string;
 }
 
 interface UserDataFormProps {
@@ -15,19 +16,56 @@ interface UserDataFormProps {
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
   idNumber: Yup.string().required('ID Number is required'),
+  signatureCid: Yup.string().required('Signature is required'),
 });
 
 const UserDataForm: React.FC<UserDataFormProps> = ({ onSubmit }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const initialValues: UserFormValues = { name: '', idNumber: '' };
+  const initialValues: UserFormValues = { name: '', idNumber: '', signatureCid: '' };
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleSubmit = (
+  const uploadSignatureToIPFS = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          const response = await fetch('/api/ipfs', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ file: reader.result }),
+          });
+  
+          const data = await response.json();
+  
+          if (data.success) {
+            console.log('Signature uploaded to IPFS. CID:', data.cid);
+            resolve(data.cid);
+          } else {
+            reject(new Error(data.error || 'Error uploading to IPFS'));
+          }
+        } catch (error) {
+          console.error('Error calling IPFS upload endpoint:', error);
+          reject(error);
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+  const handleSubmit = async (
     values: UserFormValues,
-    { setSubmitting }: FormikHelpers<UserFormValues>
+    { setSubmitting, setFieldValue }: FormikHelpers<UserFormValues>
   ) => {
-    onSubmit(values);
-    setSubmitting(false);
+    try {
+      onSubmit(values);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -45,7 +83,6 @@ const UserDataForm: React.FC<UserDataFormProps> = ({ onSubmit }) => {
         sx={{ 
           padding: isMobile ? 3 : 4, 
           width: '100%',  
-          maxHeight: '20%',
           maxWidth: 400,
           borderRadius: 2
         }}
@@ -58,7 +95,7 @@ const UserDataForm: React.FC<UserDataFormProps> = ({ onSubmit }) => {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ errors, touched, isSubmitting }) => (
+          {({ errors, touched, isSubmitting, setFieldValue }) => (
             <Form>
               <Field
                 as={TextField}
@@ -80,11 +117,36 @@ const UserDataForm: React.FC<UserDataFormProps> = ({ onSubmit }) => {
                 helperText={touched.idNumber && errors.idNumber}
                 sx={{ mb: 3 }}
               />
+              <Input
+                type="file"
+                inputProps={{ accept: 'image/jpeg' }}
+                onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
+                  const file = event.target.files?.[0];
+                  if (file) {
+                    setIsUploading(true);
+                    try {
+                      console.log('>>>>>>')
+                      const cid = await uploadSignatureToIPFS(file);
+                      console.log(cid)
+                      setFieldValue('signatureCid', cid);
+                    } catch (error) {
+                      console.error('Error uploading signature:', error);
+                      // Handle error (e.g., show error message to user)
+                    } finally {
+                      setIsUploading(false);
+                    }
+                  }
+                }}
+                sx={{ mb: 2 }}
+              />
+              {errors.signatureCid && touched.signatureCid && (
+                <Typography color="error">{errors.signatureCid}</Typography>
+              )}
               <Button 
                 type="submit" 
                 variant="contained" 
                 color="primary" 
-                disabled={isSubmitting} 
+                disabled={isSubmitting || isUploading}
                 fullWidth
                 sx={{ 
                   mt: 2, 
@@ -93,7 +155,7 @@ const UserDataForm: React.FC<UserDataFormProps> = ({ onSubmit }) => {
                   textTransform: 'none'
                 }}
               >
-                Submit
+                {isUploading ? 'Uploading...' : isSubmitting ? 'Submitting...' : 'Submit'}
               </Button>
             </Form>
           )}
