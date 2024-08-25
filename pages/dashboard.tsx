@@ -126,7 +126,7 @@ export default function Dashboard() {
             <Grid item xs={12} sm={6}>
               <Card>
                 <CardContent>
-                  <Box display="flex" alignItems="center">
+                  <Box display="flex" alignItems="center" onClick={() => router.push("/sign")}>
                     <DescriptionIcon color="primary" sx={{ fontSize: 40, marginRight: 2 }} />
                     <Typography variant="h6">Sign Documents</Typography>
                   </Box>
