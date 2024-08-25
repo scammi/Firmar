@@ -114,7 +114,7 @@ export default function Dashboard() {
           <Typography color="error" align="center">{error}</Typography>
         ) : (
           <>
-            <Card elevation={3} sx={{ marginBottom: 3, bgcolor: '#fff9e6' }}>
+            <Card elevation={3} sx={{ marginBottom: 3 }}>
               <CardContent>
                 <Typography variant="h5" gutterBottom color="primary" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}>
                   Your Soul Token Metadata

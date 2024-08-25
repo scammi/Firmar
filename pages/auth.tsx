@@ -22,6 +22,7 @@ import {
 } from "@mui/material";
 import Head from 'next/head';
 import { useNFTStatus } from "./components/UseNFTStatus";
+import Header from "./components/Header";
 
 const callRenaperAuth = async (formData: UserFormValues, userAddress: string) => {
   try {
@@ -155,102 +156,55 @@ export default function DashboardPage() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Head>
-          <title>Authentication - Soul DID</title>
-        </Head>
+    <>
+      <Header />
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Head>
+            <title>Authentication - Soul DID</title>
+          </Head>
 
-        <Grid container justifyContent="center">
-          <Grid item xs={12} sm={10} md={8} lg={6}>
-            <Box sx={{ width: '100%', padding: isMobile ? 2 : 4 }}>
-              <Stepper activeStep={activeStep} alternativeLabel>
-                {steps.map((label) => (
-                  <Step key={label}>
-                    <StepLabel>{label}</StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
+          <Grid container justifyContent="center">
+            <Grid item xs={12} sm={10} md={8} lg={6}>
+              <Box sx={{ width: '100%', padding: isMobile ? 2 : 4 }}>
+                <Stepper activeStep={activeStep} alternativeLabel>
+                  {steps.map((label) => (
+                    <Step key={label}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
 
-              <Box mt={6}>
-                {activeStep === 0 && (
-                  <UserDataForm onSubmit={handleUserDataSubmit} />
-                )}
+                <Box mt={6}>
+                  {activeStep === 0 && (
+                    <UserDataForm onSubmit={handleUserDataSubmit} />
+                  )}
 
-                {activeStep === 1 && (
-                  <Paper elevation={3} sx={{ padding: '20px', maxWidth: 400, margin: 'auto'}}>
-                    <Typography variant="h5" gutterBottom>
-                      Webcam Capture
-                    </Typography>
-                    {!cameraReady && (
-                      <Box display="flex" justifyContent="center" alignItems="center" height={300}>
-                        <CircularProgress />
-                      </Box>
-                    )}
-                    <Box
-                      sx={{
-                        position: 'relative',
-                        width: '100%',
-                        paddingTop: '75%', // 4:3 aspect ratio
-                        overflow: 'hidden',
-                        borderRadius: '8px',
-                        marginBottom: '20px',
-                        display: cameraReady ? 'block' : 'none',
-                      }}
-                    >
-                      <video
-                        ref={videoRef}
-                        autoPlay
-                        playsInline
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                        }}
-                      />
-                    </Box>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={captureImage}
-                      disabled={!cameraReady}
-                      fullWidth
-                    >
-                      Take Picture
-                    </Button>
-                    <canvas ref={canvasRef} style={{ display: 'none' }} />
-                  </Paper>
-                )}
-
-                <Box marginY='20px'> 
-                  <span />
-                </Box>
-
-                {imageSrc && (
-                  <Paper elevation={3} sx={{ padding: '20px', maxWidth: 400, margin: 'auto' }}>
-                    <Box mt={4}>
-                      <Typography variant="h6" gutterBottom>
-                        Captured Image
+                  {activeStep === 1 && (
+                    <Paper elevation={3} sx={{ padding: '20px', maxWidth: 400, margin: 'auto'}}>
+                      <Typography variant="h5" gutterBottom>
+                        Webcam Capture
                       </Typography>
+                      {!cameraReady && (
+                        <Box display="flex" justifyContent="center" alignItems="center" height={300}>
+                          <CircularProgress />
+                        </Box>
+                      )}
                       <Box
                         sx={{
+                          position: 'relative',
                           width: '100%',
                           paddingTop: '75%', // 4:3 aspect ratio
-                          position: 'relative',
                           overflow: 'hidden',
                           borderRadius: '8px',
                           marginBottom: '20px',
-                          maxWidth: 400,
-                          display: "flex",
-                          alignItems: 'center'
+                          display: cameraReady ? 'block' : 'none',
                         }}
                       >
-                        <img
-                          src={imageSrc}
-                          alt="Captured"
+                        <video
+                          ref={videoRef}
+                          autoPlay
+                          playsInline
                           style={{
                             position: 'absolute',
                             top: 0,
@@ -263,36 +217,86 @@ export default function DashboardPage() {
                       </Box>
                       <Button
                         variant="contained"
-                        color="secondary"
-                        onClick={handleAuthenticate}
-                        disabled={isLoading || authStatus !== 'idle'}
+                        color="primary"
+                        onClick={captureImage}
+                        disabled={!cameraReady}
                         fullWidth
                       >
-                        {isLoading ? 'Authenticating...' : 'Authenticate'}
+                        Take Picture
                       </Button>
-                    </Box>
-                  </Paper>
-                )}
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
-      </Box>
+                      <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    </Paper>
+                  )}
 
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={isLoading}
-      >
-        {authStatus === 'success' && (
-          <CheckCircleOutlineIcon color="success" style={{ fontSize: 60 }} />
-        )}
-        {authStatus === 'error' && (
-          <ErrorOutlineIcon color="error" style={{ fontSize: 60 }} />
-        )}
-        {authStatus === 'idle' && (
-          <CircularProgress color="inherit" />
-        )}
-      </Backdrop>
-    </Container>
+                  <Box marginY='20px'> 
+                    <span />
+                  </Box>
+
+                  {imageSrc && (
+                    <Paper elevation={3} sx={{ padding: '20px', maxWidth: 400, margin: 'auto' }}>
+                      <Box mt={4}>
+                        <Typography variant="h6" gutterBottom>
+                          Captured Image
+                        </Typography>
+                        <Box
+                          sx={{
+                            width: '100%',
+                            paddingTop: '75%', // 4:3 aspect ratio
+                            position: 'relative',
+                            overflow: 'hidden',
+                            borderRadius: '8px',
+                            marginBottom: '20px',
+                            maxWidth: 400,
+                            display: "flex",
+                            alignItems: 'center'
+                          }}
+                        >
+                          <img
+                            src={imageSrc}
+                            alt="Captured"
+                            style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                            }}
+                          />
+                        </Box>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={handleAuthenticate}
+                          disabled={isLoading || authStatus !== 'idle'}
+                          fullWidth
+                        >
+                          {isLoading ? 'Authenticating...' : 'Authenticate'}
+                        </Button>
+                      </Box>
+                    </Paper>
+                  )}
+                </Box>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={isLoading}
+        >
+          {authStatus === 'success' && (
+            <CheckCircleOutlineIcon color="success" style={{ fontSize: 60 }} />
+          )}
+          {authStatus === 'error' && (
+            <ErrorOutlineIcon color="error" style={{ fontSize: 60 }} />
+          )}
+          {authStatus === 'idle' && (
+            <CircularProgress color="inherit" />
+          )}
+        </Backdrop>
+      </Container>
+    </>
   );
 }

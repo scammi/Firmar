@@ -1,23 +1,118 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
 
-@layer base {
-  /* normal */
-  @font-face {
-    font-family: "Adelle Sans";
-    src: url("/fonts/AdelleSans-Regular.woff2") format("woff2");
-    font-style: normal;
-    font-display: swap;
-    font-weight: 300;
-  }
+:root {
+  /* Pastel Color Palette */
+  --pastel-blue: #a8d8ea;
+  --pastel-pink: #ffcad4;
+  --pastel-yellow: #fff5ba;
+  --pastel-green: #c7e5b4;
+  --pastel-purple: #e1c3ff;
 
-  /* semibold */
-  @font-face {
-    font-family: "Adelle Sans";
-    src: url("/fonts/AdelleSans-Semibold.woff2") format("woff2");
-    font-style: normal;
-    font-display: swap;
-    font-weight: 600;
-  }
+  /* Neutral Colors */
+  --white: #ffffff;
+  --light-gray: #f0f0f0;
+  --medium-gray: #cccccc;
+  --dark-gray: #333333;
+
+  /* Typography */
+  --font-primary: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  --font-secondary: 'Open Sans', 'Helvetica', 'Arial', sans-serif;
+
+  /* Sizes */
+  --spacing-small: 0.5rem;
+  --spacing-medium: 1rem;
+  --spacing-large: 2rem;
+
+  /* Border Radius */
+  --border-radius: 8px;
 }
+
+/* Global Styles */
+body {
+  font-family: var(--font-primary);
+  line-height: 1.6;
+  color: var(--dark-gray);
+  background-color: var(--white);
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-secondary);
+  margin-top: var(--spacing-large);
+  margin-bottom: var(--spacing-medium);
+}
+
+a {
+  color: var(--pastel-blue);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Form Elements */
+input, textarea, select {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  padding: var(--spacing-small);
+  border: 1px solid var(--medium-gray);
+  border-radius: var(--border-radius);
+  background-color: var(--white);
+}
+
+button {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  padding: var(--spacing-small) var(--spacing-medium);
+  background-color: var(--pastel-blue);
+  color: var(--dark-gray);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--pastel-pink);
+}
+
+/* Utility Classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-medium);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: var(--spacing-small); }
+.mt-2 { margin-top: var(--spacing-medium); }
+.mt-3 { margin-top: var(--spacing-large); }
+
+.mb-1 { margin-bottom: var(--spacing-small); }
+.mb-2 { margin-bottom: var(--spacing-medium); }
+.mb-3 { margin-bottom: var(--spacing-large); }
+
+/* Card Style */
+.card {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-medium);
+  margin-bottom: var(--spacing-medium);
+}
+
+/* Custom Background Colors */
+.bg-blue { background-color: var(--pastel-blue); }
+.bg-pink { background-color: var(--pastel-pink); }
+.bg-yellow { background-color: var(--pastel-yellow); }
+.bg-green { background-color: var(--pastel-green); }
+.bg-purple { background-color: var(--pastel-purple); }
+
+

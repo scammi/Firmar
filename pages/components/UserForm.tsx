@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { Button, TextField, Box, Typography, useMediaQuery, useTheme, Paper, Input } from '@mui/material';
+import Header from './Header';
 
 export interface UserFormValues {
   name: string;
@@ -69,98 +70,104 @@ const UserDataForm: React.FC<UserDataFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <Box 
-      sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        padding: isMobile ? 2 : 4,
-        backgroundColor: theme.palette.background.default
-      }}
-    >
-      <Paper 
-        elevation={3} 
+    <>
+      <Box 
         sx={{ 
-          padding: isMobile ? 3 : 4, 
-          width: '100%',  
-          maxWidth: 400,
-          borderRadius: 2
+          display: 'flex', 
+          justifyContent: 'center', 
+          padding: isMobile ? 2 : 4,
+          backgroundColor: theme.palette.background.default
         }}
       >
-        <Typography variant="h5" gutterBottom align="center" sx={{ mb: 3 }}>
-          User Information
-        </Typography>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
+
+        <Paper 
+          elevation={3} 
+          sx={{ 
+            // backgroundColor: '#a8d8ea',
+            padding: isMobile ? 3 : 4, 
+            width: '100%',  
+            maxWidth: 400,
+            borderRadius: 2
+          }}
         >
-          {({ errors, touched, isSubmitting, setFieldValue }) => (
-            <Form>
-              <Field
-                as={TextField}
-                fullWidth
-                margin="normal"
-                name="name"
-                label="Full Name"
-                error={touched.name && Boolean(errors.name)}
-                helperText={touched.name && errors.name}
-                sx={{ mb: 2 }}
-              />
-              <Field
-                as={TextField}
-                fullWidth
-                margin="normal"
-                name="idNumber"
-                label="ID Number"
-                error={touched.idNumber && Boolean(errors.idNumber)}
-                helperText={touched.idNumber && errors.idNumber}
-                sx={{ mb: 3 }}
-              />
-              <Input
-                type="file"
-                inputProps={{ accept: 'image/jpeg' }}
-                onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
-                  const file = event.target.files?.[0];
-                  if (file) {
-                    setIsUploading(true);
-                    try {
-                      console.log('>>>>>>')
-                      const cid = await uploadSignatureToIPFS(file);
-                      console.log(cid)
-                      setFieldValue('signatureCid', cid);
-                    } catch (error) {
-                      console.error('Error uploading signature:', error);
-                      // Handle error (e.g., show error message to user)
-                    } finally {
-                      setIsUploading(false);
+          <Typography variant="h5" gutterBottom align="center" sx={{ mb: 3 }}>
+            Welcome !
+          </Typography>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ errors, touched, isSubmitting, setFieldValue }) => (
+              <Form>
+                <Field
+                  as={TextField}
+                  fullWidth
+                  margin="normal"
+                  name="name"
+                  label="Full Name"
+                  error={touched.name && Boolean(errors.name)}
+                  helperText={touched.name && errors.name}
+                  sx={{ mb: 2 }}
+                />
+                <Field
+                  as={TextField}
+                  fullWidth
+                  margin="normal"
+                  name="idNumber"
+                  label="ID Number"
+                  error={touched.idNumber && Boolean(errors.idNumber)}
+                  helperText={touched.idNumber && errors.idNumber}
+                  sx={{ mb: 3 }}
+                />
+                <Input
+                  type="file"
+                  inputProps={{ accept: 'image/jpeg' }}
+                  onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
+                    const file = event.target.files?.[0];
+                    if (file) {
+                      setIsUploading(true);
+                      try {
+                        console.log('>>>>>>')
+                        const cid = await uploadSignatureToIPFS(file);
+                        console.log(cid)
+                        setFieldValue('signatureCid', cid);
+                      } catch (error) {
+                        console.error('Error uploading signature:', error);
+                        // Handle error (e.g., show error message to user)
+                      } finally {
+                        setIsUploading(false);
+                      }
                     }
-                  }
-                }}
-                sx={{ mb: 2 }}
-              />
-              {errors.signatureCid && touched.signatureCid && (
-                <Typography color="error">{errors.signatureCid}</Typography>
-              )}
-              <Button 
-                type="submit" 
-                variant="contained" 
-                color="primary" 
-                disabled={isSubmitting || isUploading}
-                fullWidth
-                sx={{ 
-                  mt: 2, 
-                  py: 1.5, 
-                  fontSize: '1rem',
-                  textTransform: 'none'
-                }}
-              >
-                {isUploading ? 'Uploading...' : isSubmitting ? 'Submitting...' : 'Submit'}
-              </Button>
-            </Form>
-          )}
-        </Formik>
-      </Paper>
-    </Box>
+                  }}
+                  sx={{ mb: 2 }}
+                />
+                
+                {errors.signatureCid && touched.signatureCid && (
+                  <Typography color="error">{errors.signatureCid}</Typography>
+                )}
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    disabled={isSubmitting}
+                    sx={{
+                      mt: 2,
+                      py: 1.5,
+                      fontSize: '1rem',
+                      textTransform: 'none',
+                    }}
+                  >
+                    {isUploading ? 'Uploading...' : isSubmitting ? 'Submitting...' : 'Submit'}
+                  </Button>
+              </Form>
+            )}
+          </Formik>
+        </Paper>
+      </Box>
+    
+    </>
   );
 };
 
