@@ -57,7 +57,7 @@ const UserDataForm: React.FC<UserDataFormProps> = ({ onSubmit }) => {
   };
   const handleSubmit = async (
     values: UserFormValues,
-    { setSubmitting, setFieldValue }: FormikHelpers<UserFormValues>
+    { setSubmitting }: FormikHelpers<UserFormValues>
   ) => {
     try {
       onSubmit(values);
@@ -73,7 +73,6 @@ const UserDataForm: React.FC<UserDataFormProps> = ({ onSubmit }) => {
       sx={{ 
         display: 'flex', 
         justifyContent: 'center', 
-        minHeight: '100vh',
         padding: isMobile ? 2 : 4,
         backgroundColor: theme.palette.background.default
       }}

@@ -100,53 +100,53 @@ export default function Dashboard() {
 
   return (
     <>
-    <Header />
-    <Box sx={{ maxWidth: 800, margin: 'auto', padding: isMobile ? 2 : 4 }}>
-      <Head>
-        <title>Dashboard - Soul DID</title>
-      </Head>
-      <Typography variant="h4" gutterBottom align="center">
-        Dashboard
-      </Typography>
-      {isLoading ? (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
-          <CircularProgress />
-        </Box>
-      ) : error ? (
-        <Typography color="error" align="center">{error}</Typography>
-      ) : (
-        <>
-          <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
-            <Typography variant="h6" gutterBottom>Your Soul Token Metadata</Typography>
-            <Typography><strong>Name:</strong> {metadata?.nombre || 'N/A'}</Typography>
-            <Typography><strong>DNI:</strong> {metadata?.dni || 'N/A'}</Typography>
-            <Typography><strong>Signature CID:</strong> {formatSignatureCid(metadata?.signatureCid)}</Typography>
-          </Paper>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <Card>
-                <CardContent>
-                  <Box display="flex" alignItems="center" onClick={()=> router.push('/explore-web3')}>
-                    <ExploreIcon color="primary" sx={{ fontSize: 40, marginRight: 2 }} />
-                    <Typography variant="h6">Explore Web3</Typography>
-                  </Box>
-                </CardContent>
-              </Card>
+      <Header />
+      <Box sx={{ maxWidth: 800, margin: 'auto', padding: isMobile ? 2 : 4 }}>
+        <Head>
+          <title>Dashboard - Soul DID</title>
+        </Head>
+        <Typography variant="h4" gutterBottom align="center">
+          Dashboard
+        </Typography>
+        {isLoading ? (
+          <Box display="flex" justifyContent="center" minHeight="50vh">
+            <CircularProgress />
+          </Box>
+        ) : error ? (
+          <Typography color="error" align="center">{error}</Typography>
+        ) : (
+          <>
+            <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
+              <Typography variant="h6" gutterBottom>Your Soul Token Metadata</Typography>
+              <Typography><strong>Name:</strong> {metadata?.nombre || 'N/A'}</Typography>
+              <Typography><strong>DNI:</strong> {metadata?.dni || 'N/A'}</Typography>
+              <Typography><strong>Signature CID:</strong> {formatSignatureCid(metadata?.signatureCid)}</Typography>
+            </Paper>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <Card>
+                  <CardContent>
+                    <Box display="flex" alignItems="center" onClick={() => router.push('/explore-web3')}>
+                      <ExploreIcon color="primary" sx={{ fontSize: 40, marginRight: 2 }} />
+                      <Typography variant="h6">Explore Web3</Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Card>
+                  <CardContent>
+                    <Box display="flex" alignItems="center" onClick={handleNavigateToSign}>
+                      <DescriptionIcon color="primary" sx={{ fontSize: 40, marginRight: 2 }} />
+                      <Typography variant="h6">Sign Documents</Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <Card>
-                <CardContent>
-                  <Box display="flex" alignItems="center" onClick={handleNavigateToSign}>
-                    <DescriptionIcon color="primary" sx={{ fontSize: 40, marginRight: 2 }} />
-                    <Typography variant="h6">Sign Documents</Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </>
-      )}
-    </Box>
+          </>
+        )}
+      </Box>
     </>
   );
 }

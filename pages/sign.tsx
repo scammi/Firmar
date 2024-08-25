@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Box, Typography, Paper, TextField, Button, CircularProgress } from '@mui/material';
-import { DocusealForm } from '@docuseal/react'
-
+import { Box, Typography, Paper, CircularProgress, Tooltip } from '@mui/material';
+import { DocusealForm } from '@docuseal/react';
 import Head from 'next/head';
 import { formatSignatureCid } from './api/ui.utils';
 import Header from './components/Header';
 
-
 export default function Sign() {
   const router = useRouter();
   const [userData, setUserData] = useState({ name: '', dni: '', signatureCid: '' });
-  const [documentText, setDocumentText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [signatureHash, setSignatureHash] = useState('');
 
   useEffect(() => {
     if (router.isReady) {
@@ -25,15 +23,30 @@ export default function Sign() {
     }
   }, [router.isReady, router.query]);
 
-  const handleSignDocument = async () => {
+  const handleDocusealComplete = async (detail) => {
     setIsLoading(true);
-    // Here you would implement the logic to sign the document
-    // This could involve calling a smart contract or an API
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Simulating an async operation
-    setIsLoading(false);
-    alert('Document signed successfully!');
+    
+    try {
+      const signatureFieldValue = detail.values.find(field => field.field === "Signature Field 1")?.value;
+      if (signatureFieldValue) {
+        const response = await fetch(signatureFieldValue);
+        const blob = await response.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+        const hash = await crypto.subtle.digest('SHA-256', arrayBuffer);
+        const hashArray = Array.from(new Uint8Array(hash));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        setSignatureHash('0x' + hashHex);
+      }
+    } catch (error) {
+      console.error('Error processing signature:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
-  console.log('https://chargedparticles.infura-ipfs.io/ipfs/' + userData.signatureCid)
+
+  const truncateHash = (hash, start = 6, end = -2) => {
+    return hash ? `${hash.slice(0, start)}...${hash.slice(end)}` : '';
+  };
 
   return (
     <>
@@ -51,17 +64,36 @@ export default function Sign() {
           <Typography><strong>DNI:</strong> {userData.dni}</Typography>
           <Typography><strong>Signature CID:</strong> {formatSignatureCid(userData.signatureCid)}</Typography>
         </Paper>
-        <Paper elevation={3} sx={{ padding: 3 }}>
-        <DocusealForm
-              src="https://docuseal.co/d/HyANjgot2ow9dn"
-              email="signer@example.com"
-              signature={'https://chargedparticles.infura-ipfs.io/ipfs/' + userData.signatureCid}
-              onComplete={(detail) => {console.log(detail)}}
+        <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
+          <DocusealForm
+            src="https://docuseal.co/d/HyANjgot2ow9dn"
+            email="signer@example.com"
+            signature={'https://chargedparticles.infura-ipfs.io/ipfs/' + userData.signatureCid}
+            onComplete={handleDocusealComplete}
           />
-
         </Paper>
+        {isLoading ? (
+          <CircularProgress />
+        ) : signatureHash && (
+          <Paper elevation={3} sx={{ padding: 3 }}>
+            <Typography variant="h4" gutterBottom>Document Signature Hash</Typography>
+            <Tooltip title={signatureHash} placement="top" arrow>
+              <Typography 
+                variant='h5'
+                sx={{ 
+                  wordBreak: 'break-word', 
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline'
+                  }
+                }}
+              >
+                {truncateHash(signatureHash, 10, 4)}
+              </Typography>
+            </Tooltip>
+          </Paper>
+        )}
       </Box>
     </>
-
   );
 }
