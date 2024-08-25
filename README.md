@@ -1,39 +1,60 @@
-# Privy Auth `create-next-app` Starter
+# ValidAR Protocol
 
-This is a template for integrating [**Privy Auth**](https://www.privy.io/) into a [NextJS](https://nextjs.org/) project. Check out the deployed app [here](https://create-next-app.privy.io/)!
+ValidAR is an innovative protocol designed to create verifiable digital identities using biometric data and blockchain technology. The protocol consists of three main components: Client App, Renaper (a mock biometric verification service), and Backend.
 
-This demo uses NextJS's [Pages Router](https://nextjs.org/docs/pages/building-your-application/routing). If you'd like to see an example using the [App Router](https://nextjs.org/docs/app), just change the branch of this repository to [`app-router`](https://github.com/privy-io/create-next-app/tree/app-router). 
+## Protocol Flow
 
+1. **Biometric Signature Creation**
+   - User uploads a selfie to RENAPER (government API) through the Client App.
+   - RENAPER processes the biometric data and creates a unique key pair for signatures.
+   - Note: In this implementation, RENAPER is mocked as a service and would require actual registration in a real-world scenario.
+
+2. **DID and NFT Creation**
+   - The Client App initiates the mintDID() process with the Backend.
+   - Backend mints and grants a Soul-bound NFT (non-transferable) to the user.
+   - This NFT serves as the user's Decentralized Identifier (DID) on the blockchain.
+
+3. **Verifiable Signature Capability**
+   - Upon successful DID creation, the user becomes a Certified Signer.
+   - The user can now provide verifiable signatures for various purposes.
+
+
+![ValidAR Protocol Diagram](https://imgur.com/a/6x07P5m)
+
+
+## Key Features
+
+- **Biometric-based Key Pair**: Utilizes facial recognition for creating unique cryptographic identities.
+- **Soul-bound NFT**: Non-transferable NFT that acts as a blockchain-based digital identity.
+- **Verifiable Signatures**: Enables users to create cryptographically verifiable signatures.
+
+## Security and Privacy
+
+- The protocol ensures that biometric data is processed securely and is not stored directly on the blockchain.
+- The use of Soul-bound NFTs prevents identity theft or unauthorized transfers.
+
+## Use Cases
+
+- Digital document signing
+- Identity verification for online services
+- Secure voting systems
+- Anti-fraud measures in financial transactions
+---
+
+ValidAR aims to bridge the gap between physical and digital identities, providing a secure and verifiable way for users to prove their identity and sign documents in the digital world.
 ## Setup
 
-1. Clone this repository and open it in your terminal. 
+1. Install the necessary dependencies`.
 ```sh
-git clone https://github.com/privy-io/create-next-app
+pnpm i 
 ```
 
-2. Install the necessary dependencies (including [Privy Auth](https://www.npmjs.com/package/@privy-io/react-auth)) with `npm`.
-```sh
-npm i 
-```
-
-3. Initialize your environment variables by copying the `.env.example` file to an `.env.local` file. Then, in `.env.local`, [paste your Privy App ID from the dashboard](https://docs.privy.io/guide/dashboard/api-keys).
+3. Initialize your environment variables by copying the `.env.example` file to an `.env.local` file.
 ```sh
 # In your terminal, create .env.local from .env.example
 cp .env.example .env.local
-
-# Add your Privy App ID to .env.local
-NEXT_PUBLIC_PRIVY_APP_ID=<your-privy-app-id>
 ```
 
 ## Building locally
 
-In your project directory, run `npm run dev`. You can now visit http://localhost:3000 to see your app and login with Privy!
-
-
-## Check out:
-- `pages/_app.tsx` for how to use the `PrivyProvider` and initialize it with your Privy App ID
-- `pages/index.tsx` for how to use the `usePrivy` hook and implement a simple `login` button
-- `pages/dashboard.tsx` for how to use the `usePrivy` hook, fields like `ready`, `authenticated`, and `user`, and methods like `linkWallet` and `logout`
-
-
-**Check out [our docs](https://docs.privy.io/) for more guidance around using Privy in your app!**
+In your project directory, run `pnpm dev`. You can now visit http://localhost:3000 to see our dapp!
