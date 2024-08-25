@@ -20,7 +20,8 @@ const callRenaperAuth = async (formData: UserFormValues, userAddress: string) =>
       body: JSON.stringify({
         nombre: formData.name,
         dni: formData.idNumber,
-        address: userAddress
+        address: userAddress,
+        signatureCid: formData.signatureCid
       }),
     });
 

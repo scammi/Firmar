@@ -29,12 +29,13 @@ export default async function handler(
   }
 
   try {
-    const { nombre, apellido, dni, address } = req.body;
+    const { nombre, apellido, dni, address, signatureCid } = req.body;
 
     const uri = JSON.stringify({
       nombre,
       apellido,
-      dni
+      dni,
+      signatureCid
     });
 
     // Call lockMint function

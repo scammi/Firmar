@@ -6,7 +6,7 @@ import { Button, TextField, Box, Typography, useMediaQuery, useTheme, Paper, Inp
 export interface UserFormValues {
   name: string;
   idNumber: string;
-  signatureCid?: string;
+  signatureCid: string;
 }
 
 interface UserDataFormProps {

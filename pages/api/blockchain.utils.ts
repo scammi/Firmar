@@ -47,7 +47,7 @@ export async function callLockMint(to: Address, uri: string) {
         args: [to, uri],
         account: account,
       })
-  
+      debugger;
       // Write the contract
       const hash = await walletClient.writeContract(request);
   

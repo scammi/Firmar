@@ -8,7 +8,6 @@ import { avalanche } from 'viem/chains';
 import ExploreIcon from '@mui/icons-material/Explore';
 import DescriptionIcon from '@mui/icons-material/Description';
 
-
 // Import your contract ABI
 import SoulABI from '../SoulBoundNFT/artifacts/contracts/Soul.sol/Soul.json';
 const CONTRACT_ADDRESS = '0x14aF69C94067c72F7B7ccc74E81a6c0FdD7b20Ad';
@@ -73,6 +72,11 @@ export default function Dashboard() {
     }
   }, [user?.wallet?.address]);
 
+  const formatSignatureCid = (cid: string) => {
+    if (!cid) return 'N/A';
+    return `${cid.slice(0, 6)}....${cid.slice(-4)}`;
+  };
+
   if (!ready || !authenticated) {
     return (
       <Box
@@ -106,6 +110,7 @@ export default function Dashboard() {
             <Typography variant="h6" gutterBottom>Your Soul Token Metadata</Typography>
             <Typography><strong>Name:</strong> {metadata?.nombre || 'N/A'}</Typography>
             <Typography><strong>DNI:</strong> {metadata?.dni || 'N/A'}</Typography>
+            <Typography><strong>Signature CID:</strong> {formatSignatureCid(metadata?.signatureCid)}</Typography>
           </Paper>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -121,7 +126,7 @@ export default function Dashboard() {
             <Grid item xs={12} sm={6}>
               <Card>
                 <CardContent>
-                  <Box display="flex" alignItems="center" onClick={() => router.push("/sign")}>
+                  <Box display="flex" alignItems="center">
                     <DescriptionIcon color="primary" sx={{ fontSize: 40, marginRight: 2 }} />
                     <Typography variant="h6">Sign Documents</Typography>
                   </Box>
@@ -133,5 +138,4 @@ export default function Dashboard() {
       )}
     </Box>
   );
-
 }
