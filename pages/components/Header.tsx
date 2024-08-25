@@ -51,9 +51,12 @@ const Header = () => {
         <Button
           onClick={handleMenu}
           color="inherit"
+          size='large'
           startIcon={<AccountCircleIcon />}
         >
-          {user?.wallet?.address ? `${user.wallet.address.slice(0, 6)}...${user.wallet.address.slice(-4)}` : 'Account'}
+          <Typography variant='h6'>
+            {user?.wallet?.address ? `${user.wallet.address.slice(0, 6)}...${user.wallet.address.slice(-4)}` : 'Account'}
+          </Typography>
         </Button>
         <Menu
           id="menu-appbar"
