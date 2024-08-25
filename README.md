@@ -21,6 +21,8 @@ ValidAR is an innovative protocol designed to create verifiable digital identiti
 
 ![ValidAR Protocol Diagram](https://i.imgur.com/CI6JRnV.png)
 
+## Deployment
+https://snowtrace.io/token/0x14aF69C94067c72F7B7ccc74E81a6c0FdD7b20Ad
 
 ## Key Features
 
