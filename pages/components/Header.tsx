@@ -23,7 +23,7 @@ const Header = () => {
     router.back();
   };
 
-  const isDashboard = router.pathname === '/dashboard' || '/auth';
+  const isDashboard = router.pathname === '/dashboard' || router.pathname ===  '/auth';
 
   return (
     <Box sx={{ 

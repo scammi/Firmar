@@ -37,7 +37,8 @@ const callRenaperAuth = async (formData: UserFormValues, userAddress: string) =>
         nombre: formData.name,
         dni: formData.idNumber,
         address: userAddress,
-        signatureCid: formData.signatureCid
+        signatureCid: formData.signatureCid,
+        did: 'did:ethr:43114:' + userAddress
       }),
     });
 
@@ -49,7 +50,7 @@ const callRenaperAuth = async (formData: UserFormValues, userAddress: string) =>
   }
 };
 
-export default function DashboardPage() {
+export default function Auth() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [activeStep, setActiveStep] = useState(0);
@@ -158,7 +159,7 @@ export default function DashboardPage() {
   return (
     <>
       <Header />
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Container maxWidth="lg" sx={{ mt: 4, bgcolor: 'background.default', }} >
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Head>
             <title>Authentication - Soul DID</title>

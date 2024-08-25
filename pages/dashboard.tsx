@@ -21,6 +21,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [userScan, setUserScan] = useState('');
   const theme = useTheme();
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -55,7 +56,7 @@ export default function Dashboard() {
           functionName: 'getMetadataByAddress',
           args: [user.wallet.address as `0x${string}`]
         });
-
+        setUserScan(`https://snowtrace.io/address/${user?.wallet?.address}`)
         if (tokenURI) {
           const data = await JSON.parse(tokenURI);
           setMetadata(data);
@@ -136,8 +137,8 @@ export default function Dashboard() {
                   </TableBody>
                 </Table>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-                  <Link href="#" color="secondary" sx={{ textDecoration: 'none' }}>
-                    View Wallet/Mint Transaction
+                  <Link href={userScan} color="secondary" sx={{ textDecoration: 'none' }}>
+                    On chain actions 
                   </Link>
                   <Button
                     onClick={() => setExpanded(!expanded)}
@@ -151,7 +152,7 @@ export default function Dashboard() {
                 <Collapse in={expanded}>
                   <Box sx={{ mt: 2, maxWidth: '100%', height: 'auto' }}>
                     <img
-                      src={`https://ipfs.io/ipfs/${metadata?.signatureCid}`}
+                      src={'https://chargedparticles.infura-ipfs.io/ipfs/' + metadata.signatureCid}
                       alt="Signature"
                       style={{ maxWidth: '100%', height: 'auto', borderRadius: '4px' }}
                     />
