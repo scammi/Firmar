@@ -19,7 +19,7 @@ ValidAR is an innovative protocol designed to create verifiable digital identiti
    - The user can now provide verifiable signatures for various purposes.
 
 
-![ValidAR Protocol Diagram](https://imgur.com/a/6x07P5m)
+![ValidAR Protocol Diagram](https://i.imgur.com/CI6JRnV.png)
 
 
 ## Key Features
