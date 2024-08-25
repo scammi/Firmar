@@ -10,7 +10,9 @@ import DescriptionIcon from '@mui/icons-material/Description';
 
 // Import your contract ABI
 import SoulABI from '../SoulBoundNFT/artifacts/contracts/Soul.sol/Soul.json';
-const CONTRACT_ADDRESS = '0x14aF69C94067c72F7B7ccc74E81a6c0FdD7b20Ad';
+import { CONTRACT_ADDRESS } from './globals';
+import { formatSignatureCid } from './api/ui.utils';
+import Header from './components/Header';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -72,9 +74,15 @@ export default function Dashboard() {
     }
   }, [user?.wallet?.address]);
 
-  const formatSignatureCid = (cid: string) => {
-    if (!cid) return 'N/A';
-    return `${cid.slice(0, 6)}....${cid.slice(-4)}`;
+  const handleNavigateToSign = () => {
+    if (metadata) {
+      const queryParams = new URLSearchParams({
+        name: metadata.nombre || '',
+        dni: metadata.dni || '',
+        signatureCid: metadata.signatureCid || ''
+      }).toString();
+      router.push(`/sign?${queryParams}`);
+    }
   };
 
   if (!ready || !authenticated) {
@@ -91,6 +99,8 @@ export default function Dashboard() {
   }
 
   return (
+    <>
+    <Header />
     <Box sx={{ maxWidth: 800, margin: 'auto', padding: isMobile ? 2 : 4 }}>
       <Head>
         <title>Dashboard - Soul DID</title>
@@ -116,7 +126,7 @@ export default function Dashboard() {
             <Grid item xs={12} sm={6}>
               <Card>
                 <CardContent>
-                  <Box display="flex" alignItems="center">
+                  <Box display="flex" alignItems="center" onClick={()=> router.push('/explore-web3')}>
                     <ExploreIcon color="primary" sx={{ fontSize: 40, marginRight: 2 }} />
                     <Typography variant="h6">Explore Web3</Typography>
                   </Box>
@@ -126,7 +136,7 @@ export default function Dashboard() {
             <Grid item xs={12} sm={6}>
               <Card>
                 <CardContent>
-                  <Box display="flex" alignItems="center" onClick={() => router.push("/sign")}>
+                  <Box display="flex" alignItems="center" onClick={handleNavigateToSign}>
                     <DescriptionIcon color="primary" sx={{ fontSize: 40, marginRight: 2 }} />
                     <Typography variant="h6">Sign Documents</Typography>
                   </Box>
@@ -137,5 +147,6 @@ export default function Dashboard() {
         </>
       )}
     </Box>
+    </>
   );
 }

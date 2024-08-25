@@ -1,12 +1,12 @@
 import { createPublicClient, http, createWalletClient, parseAbi, Address } from 'viem';
 import { avalanche } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
+import { CONTRACT_ADDRESS } from '../globals';
 
 // Load environment variables
-export const CONTRACT_ADDRESS = '0x14aF69C94067c72F7B7ccc74E81a6c0FdD7b20Ad';
 const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
-
-if (!PRIVATE_KEY || !CONTRACT_ADDRESS) {
+debugger;
+if (!PRIVATE_KEY) {
   throw new Error('Missing environment variables. Please check your .env file.');
 }
 

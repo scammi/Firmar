@@ -3,8 +3,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { createPublicClient, http, getContract } from 'viem';
 import { avalanche } from 'viem/chains';
 import SoulABI from '../../SoulBoundNFT/artifacts/contracts/Soul.sol/Soul.json';
-
-const CONTRACT_ADDRESS = '0x14aF69C94067c72F7B7ccc74E81a6c0FdD7b20Ad';
+import { CONTRACT_ADDRESS } from '../globals';
 
 export function useNFTStatus() {
   const [hasNFT, setHasNFT] = useState<boolean | null>(null);
