@@ -15,11 +15,11 @@ ValidAR is an innovative protocol designed to create verifiable digital identiti
    - This NFT serves as the user's Decentralized Identifier (DID) on the blockchain.
 
 3. **Verifiable Signature Capability**
-   - Upon successful DID creation, the user becomes a Certified Signer.
+   - Upon successful DID creation, the user becomes a Certified Signer. (ethr-did)
    - The user can now provide verifiable signatures for various purposes.
 
 
-![ValidAR Protocol Diagram](https://i.imgur.com/CI6JRnV.png)
+![ValidAR Protocol Diagram](https://i.imgur.com/CI6JRnV.png)  
 
 ## Deployment
 https://snowtrace.io/token/0x14aF69C94067c72F7B7ccc74E81a6c0FdD7b20Ad
