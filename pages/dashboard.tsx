@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { usePrivy } from "@privy-io/react-auth";
-import { Box, Typography, CircularProgress, Paper, Grid, CardContent, Card, useMediaQuery, useTheme, Collapse, Link, Button, Table, TableBody, TableCell, TableRow } from '@mui/material';
+import { Box, Typography, CircularProgress, Grid, CardContent, Card, useMediaQuery, useTheme, Collapse, Link, Button, Table, TableBody, TableCell, TableRow } from '@mui/material';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { createPublicClient, http, getContract } from 'viem';
 import { avalanche } from 'viem/chains';
 import ExploreIcon from '@mui/icons-material/Explore';
 import DescriptionIcon from '@mui/icons-material/Description';
+import { queryAttestations } from '../pages/api/getAttestation';
 
 // Import your contract ABI
 import SoulABI from '../Hardhat/artifacts/contracts/Soul.sol/Soul.json';
@@ -40,6 +41,16 @@ export default function Dashboard() {
       setError(null);
 
       try {
+        try {
+          const attestationData = await queryAttestations(user.wallet.address);
+          console.log(attestationData);
+        } catch (attestationError) {
+          console.error("Error fetching attestation:", attestationError);
+          // You might want to set a separate error state for attestation errors
+        }
+
+        ////
+
         const publicClient = createPublicClient({
           chain: avalanche,
           transport: http()

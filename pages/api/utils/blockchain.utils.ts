@@ -15,12 +15,10 @@ if (!PRIVATE_KEY) {
   throw new Error('Missing environment variables. Please check your .env file.');
 }
 
-// ABI for lockMint function
 export const lockMintAbi = parseAbi([
   'function lockMint(address to, string memory uri) public returns (uint256)'
 ]);
 
-// Create Viem public client
 export const avaxPublicClient = createPublicClient({
   chain: avalanche,
   transport: http()
@@ -98,7 +96,7 @@ export async function createCertifiedSignerAttestation(
 ) {
   const client = new SignProtocolClient(SpMode.OnChain, {
     chain: EvmChains.polygon,
-    account: 
+    account 
   });
 
   const attestationInfo = await client.createAttestation({
