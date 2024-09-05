@@ -98,7 +98,7 @@ export async function createCertifiedSignerAttestation(
 ) {
   const client = new SignProtocolClient(SpMode.OnChain, {
     chain: EvmChains.polygon,
-    account 
+    account: 
   });
 
   const attestationInfo = await client.createAttestation({

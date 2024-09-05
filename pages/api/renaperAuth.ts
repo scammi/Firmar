@@ -6,6 +6,8 @@ type RenaperAuthSuccessResponse = {
   message: string;
   tokenId?: string | null;
   transactionHash?: string;
+  attestationTxHash: string;
+  attestationId: string;
 };
 
 type RenaperAuthErrorResponse = {
@@ -50,13 +52,13 @@ export default async function handler(
       signature_cid: signatureCid
     });
 
-    console.log('>>>>>>> ', attestation)
-
     return res.status(200).json({ 
       success: true, 
       message: "Renaper authentication successful and NFT minted",
       tokenId: tokenId ? tokenId.toString() : null,
-      transactionHash: hash
+      transactionHash: hash,
+      attestationTxHash: attestation.txHash,
+      attestationId: attestation.attestationId,
     });
 
   } catch (e: any) {

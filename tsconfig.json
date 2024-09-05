@@ -2,7 +2,7 @@
   "extends": [
     "@tsconfig/strictest/tsconfig",
     "@tsconfig/node18/tsconfig",
-    "@tsconfig/next/tsconfig"
+    "@tsconfig/next/tsconfig",
   ],
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -21,6 +21,6 @@
     "exactOptionalPropertyTypes": false,
     "moduleResolution": "node"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "scripts/**/*"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "pages/api/utils/**/*.ts" ],
   "exclude": ["node_modules"]
 }
