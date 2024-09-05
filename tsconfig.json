@@ -19,8 +19,9 @@
     "noImplicitReturns": false,
     "noPropertyAccessFromIndexSignature": false,
     "exactOptionalPropertyTypes": false,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "strict": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "pages/api/utils/**/*.ts" ],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx" ],
+  "exclude": ["node_modules"],
 }

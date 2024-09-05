@@ -7,7 +7,7 @@ import { createPublicClient, http, getContract } from 'viem';
 import { avalanche } from 'viem/chains';
 import ExploreIcon from '@mui/icons-material/Explore';
 import DescriptionIcon from '@mui/icons-material/Description';
-import { queryAttestations } from '../pages/api/getAttestation';
+import { queryAttestations } from '../pages/api/get-attestation';
 
 // Import your contract ABI
 import SoulABI from '../Hardhat/artifacts/contracts/Soul.sol/Soul.json';

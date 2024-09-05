@@ -4,7 +4,6 @@ import { ATTESTER } from '../globals';
 async function makeAttestationRequest(endpoint: string, options: any) {
   let url = `https://mainnet-rpc.sign.global/api/${endpoint}`;
   
-  // If it's a GET request, append params to URL
   if (options.method === 'GET' && options.params) {
     const queryParams = new URLSearchParams(options.params).toString();
     url += `?${queryParams}`;
@@ -17,7 +16,6 @@ async function makeAttestationRequest(endpoint: string, options: any) {
     },
   };
 
-  // If it's not a GET request, add body
   if (options.method !== 'GET' && options.params) {
     fetchOptions.body = JSON.stringify(options.params);
   }
@@ -62,7 +60,6 @@ export async function queryAttestations(indexingValue: string) {
   };
 }
 
-// If you want to use this as a Next.js API route, you can add a handler like this:
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
