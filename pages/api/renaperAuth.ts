@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { callLockMint } from './blockchain.utils';
+import { callLockMint, createCertifiedSignerAttestation } from './utils/blockchain.utils';
 
 type RenaperAuthSuccessResponse = {
   success: boolean;
@@ -41,6 +41,16 @@ export default async function handler(
 
     // Call lockMint function
     const { hash, tokenId } = await callLockMint(address, uri);
+
+    const attestation = await createCertifiedSignerAttestation(address, {
+      first_name: nombre,
+      last_name: nombre,
+      did: did,
+      national_document_identifier: dni,
+      signature_cid: signatureCid
+    });
+
+    console.log('>>>>>>> ', attestation)
 
     return res.status(200).json({ 
       success: true, 

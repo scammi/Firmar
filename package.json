@@ -15,6 +15,7 @@
     "@docuseal/react": "^1.0.43",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@ethsign/sp-sdk": "^0.7.3",
     "@fontsource/roboto": "^5.0.14",
     "@headlessui/react": "^1.7.3",
     "@helia/unixfs": "^3.0.7",

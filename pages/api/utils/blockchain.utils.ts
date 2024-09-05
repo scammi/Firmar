@@ -1,11 +1,16 @@
 import { createPublicClient, http, createWalletClient, parseAbi, Address } from 'viem';
-import { avalanche } from 'viem/chains';
+import { avalanche, polygon } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
-import { CONTRACT_ADDRESS } from '../globals';
+import { CERTIFIED_SIGNER_SCHEMA_ID, CONTRACT_ADDRESS } from '../../globals';
+import {
+  SignProtocolClient,
+  SpMode,
+  EvmChains,
+} from '@ethsign/sp-sdk';
 
 // Load environment variables
-const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
-debugger;
+const PRIVATE_KEY = process.env.PRIVATE_KEY as Address || '' ;
+
 if (!PRIVATE_KEY) {
   throw new Error('Missing environment variables. Please check your .env file.');
 }
@@ -16,8 +21,13 @@ export const lockMintAbi = parseAbi([
 ]);
 
 // Create Viem public client
-export const publicClient = createPublicClient({
+export const avaxPublicClient = createPublicClient({
   chain: avalanche,
+  transport: http()
+});
+
+export const polygonPublicClient = createPublicClient({
+  chain: polygon,
   transport: http()
 });
 
@@ -41,7 +51,7 @@ export const contractConfig = {
 export async function callLockMint(to: Address, uri: string) {
     try {
       // Simulate the transaction
-      const { request, result } = await publicClient.simulateContract({
+      const { request, result } = await avaxPublicClient.simulateContract({
         ...contractConfig,
         functionName: 'lockMint',
         args: [to, uri],
@@ -54,7 +64,7 @@ export async function callLockMint(to: Address, uri: string) {
       console.log('Transaction sent:', hash);
   
       // Wait for the transaction to be mined
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      const receipt = await avaxPublicClient.waitForTransactionReceipt({ hash });
       console.log('Transaction mined:', receipt.transactionHash);
   
       // Check if the transaction was successful
@@ -74,6 +84,29 @@ export async function callLockMint(to: Address, uri: string) {
       console.error('Error in callLockMint:', error);
       throw error;
     }
+}
+  
+export async function createCertifiedSignerAttestation(
+  to: Address,
+  certificate: { 
+    first_name: string,
+    last_name: string,
+    national_document_identifier: string,
+    signature_cid: string,
+    did: string,
   }
-  
-  
+) {
+  const client = new SignProtocolClient(SpMode.OnChain, {
+    chain: EvmChains.polygon,
+    account 
+  });
+
+  const attestationInfo = await client.createAttestation({
+    schemaId: CERTIFIED_SIGNER_SCHEMA_ID,
+    data: certificate,
+    indexingValue: to,
+    recipients: [to]
+  });
+
+  return attestationInfo;
+}

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { Button, TextField, Box, Typography, useMediaQuery, useTheme, Paper, Input } from '@mui/material';
-import Header from './Header';
 
 export interface UserFormValues {
   name: string;
@@ -83,7 +82,6 @@ const UserDataForm: React.FC<UserDataFormProps> = ({ onSubmit }) => {
         <Paper 
           elevation={3} 
           sx={{ 
-            // backgroundColor: '#a8d8ea',
             padding: isMobile ? 3 : 4, 
             width: '100%',  
             maxWidth: 400,

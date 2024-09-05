@@ -9,9 +9,9 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import DescriptionIcon from '@mui/icons-material/Description';
 
 // Import your contract ABI
-import SoulABI from '../SoulBoundNFT/artifacts/contracts/Soul.sol/Soul.json';
+import SoulABI from '../Hardhat/artifacts/contracts/Soul.sol/Soul.json';
 import { CONTRACT_ADDRESS } from './globals';
-import { formatSignatureCid } from './api/ui.utils';
+import { formatSignatureCid } from './api/utils/ui.utils';
 import Header from './components/Header';
 
 export default function Dashboard() {

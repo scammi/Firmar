@@ -10,7 +10,6 @@ import {
   Button,
   CircularProgress,
   Container,
-  Divider,
   Grid,
   Paper,
   Step,
@@ -68,7 +67,6 @@ export default function Auth() {
     ready,
     authenticated,
     user,
-    logout,
   } = usePrivy();
 
   useEffect(() => {

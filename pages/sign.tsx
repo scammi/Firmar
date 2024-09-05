@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { Box, Typography, Paper, CircularProgress, Tooltip } from '@mui/material';
 import { DocusealForm } from '@docuseal/react';
 import Head from 'next/head';
-import { formatSignatureCid } from './api/ui.utils';
+import { formatSignatureCid } from './api/utils/ui.utils';
 import Header from './components/Header';
 
 export default function Sign() {

@@ -21,6 +21,6 @@
     "exactOptionalPropertyTypes": false,
     "moduleResolution": "node"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "scripts/**/*"],
   "exclude": ["node_modules"]
 }
