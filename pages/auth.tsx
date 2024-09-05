@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import Head from 'next/head';
 import { useNFTStatus } from "./components/UseNFTStatus";
-import Header from "./components/Header";
+import Header from "./components/header";
 
 const callRenaperAuth = async (formData: UserFormValues, userAddress: string) => {
   try {

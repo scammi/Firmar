@@ -13,7 +13,7 @@ import { queryAttestations } from '../pages/api/get-attestation';
 import SoulABI from '../Hardhat/artifacts/contracts/Soul.sol/Soul.json';
 import { CONTRACT_ADDRESS } from './globals';
 import { formatSignatureCid } from './api/utils/ui.utils';
-import Header from './components/Header';
+import Header from './components/header';
 
 export default function Dashboard() {
   const router = useRouter();

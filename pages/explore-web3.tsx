@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { usePrivy } from '@privy-io/react-auth';
 import Head from 'next/head';
 import { Box, Typography, Paper, Grid, Button, CircularProgress, TextField, Slider } from '@mui/material';
-import Header from './components/Header';
+import Header from './components/header';
 import { verifyMessage } from 'viem';
 
 export default function ExploreWeb3() {

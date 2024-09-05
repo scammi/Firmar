@@ -4,7 +4,7 @@ import { Box, Typography, Paper, CircularProgress, Tooltip } from '@mui/material
 import { DocusealForm } from '@docuseal/react';
 import Head from 'next/head';
 import { formatSignatureCid } from './api/utils/ui.utils';
-import Header from './components/Header';
+import Header from './components/header';
 
 export default function Sign() {
   const router = useRouter();
