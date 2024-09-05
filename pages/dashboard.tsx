@@ -10,7 +10,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import { queryAttestations } from '../pages/api/get-attestation';
 
 // Import your contract ABI
-import SoulABI from '../Hardhat/artifacts/contracts/Soul.sol/Soul.json';
+import SoulABI from '../hardhat/artifacts/contracts/Soul.sol/Soul.json';
 import { CONTRACT_ADDRESS } from './globals';
 import { formatSignatureCid } from './api/utils/ui.utils';
 import Header from './components/header';
