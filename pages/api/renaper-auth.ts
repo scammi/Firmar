@@ -57,7 +57,7 @@ export default async function handler(
       message: "Renaper authentication successful and NFT minted",
       tokenId: tokenId ? tokenId.toString() : null,
       transactionHash: hash,
-      attestationTxHash: attestation.txHash,
+      attestationTxHash: attestation.txHash!,
       attestationId: attestation.attestationId,
     });
 

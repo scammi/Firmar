@@ -20,7 +20,10 @@
     "noPropertyAccessFromIndexSignature": false,
     "exactOptionalPropertyTypes": false,
     "moduleResolution": "node",
-    "strict": true
+    "strict": true,
+    "composite":true
+
+
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx" ],
   "exclude": ["node_modules"],

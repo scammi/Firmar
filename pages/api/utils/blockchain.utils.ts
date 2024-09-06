@@ -70,7 +70,7 @@ export async function callLockMint(to: Address, uri: string) {
         console.log('Transaction successful');
         
         if (result > 0) {
-          return { hash: receipt.transactionHash, result };
+          return { hash: receipt.transactionHash, tokenId: result };
         } else {
           console.warn('Unable to extract tokenId from transaction logs');
           return { hash: receipt.transactionHash, tokenId: null };

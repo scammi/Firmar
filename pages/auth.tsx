@@ -20,13 +20,13 @@ import {
   useTheme
 } from "@mui/material";
 import Head from 'next/head';
-import { useNFTStatus } from "./components/UseNFTStatus";
-import Header from "./components/header";
+import useNFTStatus from "./components/useNFTStatus";
+import Header from "./components/Header";
 
 const callRenaperAuth = async (formData: UserFormValues, userAddress: string) => {
   try {
     const accessToken = await getAccessToken();
-    const response = await fetch('/api/renaperAuth', {
+    const response = await fetch('/api/renaper-auth', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

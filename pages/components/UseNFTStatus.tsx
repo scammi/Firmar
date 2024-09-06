@@ -5,7 +5,7 @@ import { avalanche } from 'viem/chains';
 import SoulABI from '../../hardhat/artifacts/contracts/Soul.sol/Soul.json';
 import { CONTRACT_ADDRESS } from '../globals';
 
-export function useNFTStatus() {
+export default function useNFTStatus() {
   const [hasNFT, setHasNFT] = useState<boolean | null>(null);
   const [metadata, setMetadata] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
