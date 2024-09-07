@@ -1,16 +1,16 @@
 
 import { LitNodeClient } from '@lit-protocol/lit-node-client';
 import { LIT_RPC, LitNetwork } from '@lit-protocol/constants';
-import { Address, createPublicClient, createWalletClient, custom, http, Transaction } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
+import { createWalletClient, http, Transaction } from 'viem';
+import { account } from './blockchain.utils';
 
-import {
-  LitAbility,
-  LitActionResource,
-  createSiweMessage,
-  generateAuthSig,
-} from "@lit-protocol/auth-helpers";
-import { signMessage } from 'viem/actions'
+// import {
+//   LitAbility,
+//   LitActionResource,
+//   createSiweMessage,
+//   generateAuthSig,
+// } from "@lit-protocol/auth-helpers";
+// import { signMessage } from 'viem/actions'
 
 
 export const LIT_CONFIG = {
@@ -23,9 +23,7 @@ export const CHAIN_CONFIG = {
   chainId: 43114, // Avalanche C-Chain
 };
 
-const account = privateKeyToAccount(process.env.PRIVATE_KEY! as Address)
-
-const walletClient = createWalletClient({
+export const walletClient = createWalletClient({
   account,
   transport: http(LIT_RPC.CHRONICLE_YELLOWSTONE)
 })
@@ -38,37 +36,38 @@ const go = async () => {
 go();
 `;
 
-// class LitService {
-//   private litNodeClient: LitNodeClient;
+class LitService {
+  private litNodeClient: LitNodeClient;
 
-//   constructor() {
-//     this.litNodeClient = new LitNodeClient({
-//       litNetwork: LIT_CONFIG.NETWORK,
-//       debug: false,
-//     });
-//   }
+  constructor() {
+    this.litNodeClient = new LitNodeClient({
+      litNetwork: LIT_CONFIG.NETWORK,
+      debug: false,
+    });
+  }
 
-//   async connect() {
-//     await this.litNodeClient.connect();
-//   }
+  async connect() {
+    await this.litNodeClient.connect();
+  }
 
-//   async disconnect() {
-//     await this.litNodeClient.disconnect();
-//   }
+  async disconnect() {
+    await this.litNodeClient.disconnect();
+  }
 
 
-//   async signTransaction(unsignedTransaction: Transaction) {
-//     const result = await this.litNodeClient.executeJs({
-//       sessionSigs: sessionSignatures,
-//       code: litActionCode,
-//       jsParams: {
-//         magicNumber: 43,
-//       }
-//     });
+  async signTransaction(unsignedTransaction: Transaction) {
+    const result = await this.litNodeClient.executeJs({
+      code: litActionCode,
+      jsParams: {
+        magicNumber: 43,
+      },
+      sessionSigs: undefined
+    });
 
-//     const signature = JSON.parse(result?.response);
-//     return { ...unsignedTransaction, ...signature };
-//   }
-// }
+    // const signature = JSON.parse(result?.response);
 
-// export const litService = new LitService();
+    return { ...unsignedTransaction, ...result };
+  }
+}
+
+export const litService = new LitService();
