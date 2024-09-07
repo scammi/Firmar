@@ -1,36 +1,44 @@
 import { useState, useEffect } from 'react';
-import { queryAttestations } from './your-attestation-query-function'; // Import your actual query function
+import { queryAttestations } from '../api/get-attestation';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
 
 export const useAttestations = (walletAddress: string | undefined) => {
-  const [attestationData, setAttestationData] = useState<any>(null);
+  const [attestationData, setAttestationData] = useState<{ success: boolean; attestations: any[] } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchAttestations(retries = 0) {
       if (!walletAddress) return;
       setIsLoading(true);
-      setError(null);
       try {
         const data = await queryAttestations(walletAddress);
-        setAttestationData(data);
+        if (data.success && data.attestations.length > 0) {
+          setAttestationData(data.attestations[0]);
+          setIsLoading(false);
+        } else if (retries < MAX_RETRIES) {
+          console.log(`Attempt ${retries + 1}: No attestations found, retrying...`);
+          setTimeout(() => fetchAttestations(retries + 1), RETRY_DELAY);
+        } else {
+          console.log("No attestations found after multiple attempts");
+          setAttestationData({ success: true, attestations: [] });
+          setIsLoading(false);
+        }
       } catch (attestationError) {
         console.error("Error fetching attestation:", attestationError);
         if (retries < MAX_RETRIES) {
           setTimeout(() => fetchAttestations(retries + 1), RETRY_DELAY);
         } else {
-          setError("Failed to fetch attestations after multiple attempts");
+          console.error("Failed to fetch attestations after multiple attempts");
+          setAttestationData(null);
+          setIsLoading(false);
         }
-      } finally {
-        setIsLoading(false);
       }
     }
 
     fetchAttestations();
   }, [walletAddress]);
 
-  return { attestationData, isLoading, error };
+  return { attestationData, isLoading };
 };

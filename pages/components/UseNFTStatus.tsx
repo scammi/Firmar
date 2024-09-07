@@ -4,6 +4,7 @@ import { createPublicClient, http, getContract } from 'viem';
 import { avalanche } from 'viem/chains';
 import SoulABI from '../../hardhat/artifacts/contracts/Soul.sol/Soul.json';
 import { CONTRACT_ADDRESS } from '../globals';
+import { queryAttestations } from '../api/get-attestation';
 
 export default function useNFTStatus() {
   const [hasNFT, setHasNFT] = useState<boolean | null>(null);
@@ -16,6 +17,13 @@ export default function useNFTStatus() {
 
   useEffect(() => {
     async function checkNFTAndFetchMetadata() {
+
+      try {
+        const attestationData = await queryAttestations(user?.wallet?.address || '');
+        console.log(attestationData);
+      } catch (attestationError) {
+        console.error("Error fetching attestation:", attestationError);
+      }
       if (!user?.wallet?.address) {
         setIsLoading(false);
         return;

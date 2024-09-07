@@ -1,40 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { usePrivy } from "@privy-io/react-auth";
-import { Box, Typography, CircularProgress, Grid, CardContent, Card, useMediaQuery, useTheme, Collapse, Link, Button, Table, TableBody, TableCell, TableRow } from '@mui/material';
+import { Box, Typography, CircularProgress, Grid, CardContent, Card, useMediaQuery, useTheme, Collapse, Link, Button, Table, TableBody, TableCell, TableRow, IconButton, Menu, MenuItem } from '@mui/material';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-// import { createPublicClient, http, getContract } from 'viem';
-// import { avalanche } from 'viem/chains';
 import ExploreIcon from '@mui/icons-material/Explore';
 import DescriptionIcon from '@mui/icons-material/Description';
-// import { queryAttestations } from '../pages/api/get-attestation';
-
-// Import your contract ABI
-// import SoulABI from '../hardhat/artifacts/contracts/Soul.sol/Soul.json';
-// import { CONTRACT_ADDRESS } from './globals';
 
 import { formatSignatureCid } from './api/utils/ui.utils';
 import Header from './components/Header';
 import useNFTStatus from './components/useNFTStatus';
+import { useAttestations } from './components/useAttestation';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import LaunchIcon from '@mui/icons-material/Launch';
 
 export default function Dashboard() {
   const router = useRouter();
-  const { ready, authenticated,  } = usePrivy();
+  const { ready, authenticated, user } = usePrivy();
   const [expanded, setExpanded] = useState(false);
   const theme = useTheme();
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { metadata, isLoading, error, userScan } = useNFTStatus();
+  const { metadata, isLoading: isNFTLoading, error, userScan: nftUserScan } = useNFTStatus();
+  const { attestationData, isLoading: isAttestationLoading } = useAttestations(user?.wallet?.address);
 
-  console.log({ metadata, isLoading, error, userScan })
-  // try {
-  //   const attestationData = await queryAttestations(user.wallet.address);
-  //   console.log(attestationData);
-  // } catch (attestationError) {
-  //   console.error("Error fetching attestation:", attestationError);
-  // }
+  console.log("attestationData" , attestationData, isAttestationLoading)
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  
   useEffect(() => {
     if (ready && !authenticated) {
       router.push("/");
@@ -43,7 +45,7 @@ export default function Dashboard() {
 
 
   const handleNavigateToSign = () => {
-    if (metadata && !isLoading) {
+    if (metadata && !isNFTLoading) {
       const queryParams = new URLSearchParams({
         name: metadata?.nombre || '',
         dni: metadata?.dni || '',
@@ -73,7 +75,7 @@ export default function Dashboard() {
         <Head>
           <title>Dashboard - Soul DID</title>
         </Head>
-        {isLoading ? (
+        {isNFTLoading ? (
           <Box display="flex" justifyContent="center" minHeight="50vh">
             <CircularProgress />
           </Box>
@@ -103,9 +105,36 @@ export default function Dashboard() {
                   </TableBody>
                 </Table>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-                  <Link href={userScan} color="secondary" sx={{ textDecoration: 'none' }}>
-                    On chain actions 
-                  </Link>
+                  <IconButton
+                    aria-label="more"
+                    id="long-button"
+                    aria-controls={open ? 'long-menu' : undefined}
+                    aria-expanded={open ? 'true' : undefined}
+                    aria-haspopup="true"
+                    onClick={handleClick}
+                  >
+                    <Typography>On chain action </Typography> <MoreVertIcon />
+                  </IconButton>
+                  <Menu
+                    id="long-menu"
+                    MenuListProps={{
+                      'aria-labelledby': 'long-button',
+                    }}
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                  >
+                    <MenuItem onClick={handleClose}>
+                      <Typography component="a" href={nftUserScan} target="_blank" rel="noopener noreferrer" sx={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
+                        NFT On-chain actions <LaunchIcon fontSize="small" sx={{ ml: 1 }} />
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                      <Typography component="a" href={'*'} target="_blank" rel="noopener noreferrer" sx={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
+                        Attestation On-chain actions <LaunchIcon fontSize="small" sx={{ ml: 1 }} />
+                      </Typography>
+                    </MenuItem>
+                  </Menu>
                   <Button
                     onClick={() => setExpanded(!expanded)}
                     color="primary"
@@ -124,6 +153,7 @@ export default function Dashboard() {
                     />
                   </Box>
                 </Collapse>
+
               </CardContent>
             </Card>
 
