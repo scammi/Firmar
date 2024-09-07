@@ -9,6 +9,7 @@ export default function useNFTStatus() {
   const [hasNFT, setHasNFT] = useState<boolean | null>(null);
   const [metadata, setMetadata] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userScan, setUserScan] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const { user } = usePrivy();
@@ -42,6 +43,8 @@ export default function useNFTStatus() {
             functionName: 'getMetadataByAddress',
             args: [user.wallet.address as `0x${string}`]
           });
+
+          setUserScan(`https://snowtrace.io/address/${user?.wallet?.address}`)
           setHasNFT(true);
         } catch (error) {
           console.log("User doesn't have an NFT");
@@ -67,5 +70,5 @@ export default function useNFTStatus() {
     checkNFTAndFetchMetadata();
   }, [user?.wallet?.address]);
 
-  return { hasNFT, metadata, isLoading, error };
+  return { hasNFT, metadata, isLoading, error, userScan };
 }

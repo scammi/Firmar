@@ -3,29 +3,37 @@ import { usePrivy } from "@privy-io/react-auth";
 import { Box, Typography, CircularProgress, Grid, CardContent, Card, useMediaQuery, useTheme, Collapse, Link, Button, Table, TableBody, TableCell, TableRow } from '@mui/material';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { createPublicClient, http, getContract } from 'viem';
-import { avalanche } from 'viem/chains';
+// import { createPublicClient, http, getContract } from 'viem';
+// import { avalanche } from 'viem/chains';
 import ExploreIcon from '@mui/icons-material/Explore';
 import DescriptionIcon from '@mui/icons-material/Description';
-import { queryAttestations } from '../pages/api/get-attestation';
+// import { queryAttestations } from '../pages/api/get-attestation';
 
 // Import your contract ABI
-import SoulABI from '../hardhat/artifacts/contracts/Soul.sol/Soul.json';
-import { CONTRACT_ADDRESS } from './globals';
+// import SoulABI from '../hardhat/artifacts/contracts/Soul.sol/Soul.json';
+// import { CONTRACT_ADDRESS } from './globals';
+
 import { formatSignatureCid } from './api/utils/ui.utils';
 import Header from './components/Header';
+import useNFTStatus from './components/useNFTStatus';
 
 export default function Dashboard() {
   const router = useRouter();
-  const { ready, authenticated, user } = usePrivy();
-  const [metadata, setMetadata] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { ready, authenticated,  } = usePrivy();
   const [expanded, setExpanded] = useState(false);
-  const [userScan, setUserScan] = useState('');
   const theme = useTheme();
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const { metadata, isLoading, error, userScan } = useNFTStatus();
+
+  console.log({ metadata, isLoading, error, userScan })
+  // try {
+  //   const attestationData = await queryAttestations(user.wallet.address);
+  //   console.log(attestationData);
+  // } catch (attestationError) {
+  //   console.error("Error fetching attestation:", attestationError);
+  // }
 
   useEffect(() => {
     if (ready && !authenticated) {
@@ -33,66 +41,13 @@ export default function Dashboard() {
     }
   }, [ready, authenticated, router]);
 
-  useEffect(() => {
-    async function fetchMetadata() {
-      if (!user?.wallet?.address) return;
-
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        try {
-          const attestationData = await queryAttestations(user.wallet.address);
-          console.log(attestationData);
-        } catch (attestationError) {
-          console.error("Error fetching attestation:", attestationError);
-          // You might want to set a separate error state for attestation errors
-        }
-
-        ////
-
-        const publicClient = createPublicClient({
-          chain: avalanche,
-          transport: http()
-        });
-
-        const contract = getContract({
-          address: CONTRACT_ADDRESS,
-          abi: SoulABI.abi,
-          client: publicClient
-        });
-
-        const tokenURI = await publicClient.readContract({
-          ...contract,
-          functionName: 'getMetadataByAddress',
-          args: [user.wallet.address as `0x${string}`]
-        });
-        setUserScan(`https://snowtrace.io/address/${user?.wallet?.address}`)
-        if (tokenURI) {
-          const data = await JSON.parse(tokenURI);
-          setMetadata(data);
-        } else {
-          setError("No metadata found for this address");
-        }
-      } catch (err) {
-        console.error("Error fetching metadata:", err);
-        setError("Failed to fetch metadata");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    if (user?.wallet?.address) {
-      fetchMetadata();
-    }
-  }, [user?.wallet?.address]);
 
   const handleNavigateToSign = () => {
-    if (metadata) {
+    if (metadata && !isLoading) {
       const queryParams = new URLSearchParams({
-        name: metadata.nombre || '',
-        dni: metadata.dni || '',
-        signatureCid: metadata.signatureCid || ''
+        name: metadata?.nombre || '',
+        dni: metadata?.dni || '',
+        signatureCid: metadata?.signatureCid || ''
       }).toString();
       router.push(`/sign?${queryParams}`);
     }
@@ -163,7 +118,7 @@ export default function Dashboard() {
                 <Collapse in={expanded}>
                   <Box sx={{ mt: 2, maxWidth: '100%', height: 'auto' }}>
                     <img
-                      src={'https://chargedparticles.infura-ipfs.io/ipfs/' + metadata.signatureCid}
+                      src={'https://chargedparticles.infura-ipfs.io/ipfs/' + metadata?.signatureCid}
                       alt="Signature"
                       style={{ maxWidth: '100%', height: 'auto', borderRadius: '4px' }}
                     />

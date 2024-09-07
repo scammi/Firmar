@@ -58,7 +58,7 @@ export default async function handler(
       tokenId: tokenId ? tokenId.toString() : null,
       transactionHash: hash,
       attestationTxHash: attestation.txHash!,
-      attestationId: attestation.attestationId,
+      attestationId: String(attestation.attestationId),
     });
 
   } catch (e: any) {

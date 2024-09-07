@@ -37,7 +37,7 @@ const callRenaperAuth = async (formData: UserFormValues, userAddress: string) =>
         dni: formData.idNumber,
         address: userAddress,
         signatureCid: formData.signatureCid,
-        did: 'did:ethr:43114:' + userAddress
+        did: 'did:ethr:137:' + userAddress
       }),
     });
 
