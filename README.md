@@ -1,49 +1,56 @@
-# ValidAR Protocol
+# Firmar Protocol
 
-ValidAR is an innovative protocol designed to create verifiable digital identities using biometric data and blockchain technology. The protocol consists of three main components: Client App, Renaper (a mock biometric verification service), and Backend.
+Firmar is an innovative digital signature solution that combines the power of LIT Protocol and Sign Protocol to create a secure, verifiable, and efficient signing process.
 
 ## Protocol Flow
 
-1. **Biometric Signature Creation**
-   - User uploads a selfie to RENAPER (government API) through the Client App.
-   - RENAPER processes the biometric data and creates a unique key pair for signatures.
-   - Note: In this implementation, RENAPER is mocked as a service and would require actual registration in a real-world scenario.
+1. **Key Creation (Client App)**
 
-2. **DID and NFT Creation**
-   - The Client App initiates the mintDID() process with the Backend.
-   - Backend mints and grants a Soul-bound NFT (non-transferable) to the user.
-   - This NFT serves as the user's Decentralized Identifier (DID) on the blockchain.
-
-3. **Verifiable Signature Capability**
-   - Upon successful DID creation, the user becomes a Certified Signer. (ethr-did)
-   - The user can now provide verifiable signatures for various purposes.
+The client app generates a key pair locally using Privy. This ensures the user has control over their private key from the start.
 
 
-![ValidAR Protocol Diagram](https://i.imgur.com/CI6JRnV.png)  
+2. **Certificate Request and Signature**
 
-## Deployment
-https://snowtrace.io/token/0x14aF69C94067c72F7B7ccc74E81a6c0FdD7b20Ad
+Client sends a certificate request with biometric data to the Backend.
+Backend forwards an attestation transaction to LIT Protocol.
+LIT Protocol performs a quorum-based action to sign the transaction.
+Signed transaction is returned to the Backend.
 
-## Key Features
 
-- **Biometric-based Key Pair**: Utilizes facial recognition for creating unique cryptographic identities.
-- **Soul-bound NFT**: Non-transferable NFT that acts as a blockchain-based digital identity.
-- **Verifiable Signatures**: Enables users to create cryptographically verifiable signatures.
+3. **Attestation Broadcast and Emission**
+
+Backend broadcasts the attestation transaction to the Sign Protocol.
+Sign Protocol emits the attestation.
+The attestation is returned to the Client App.
+
+
+## Key Components
+
+- Client App: User interface for key management and signature requests.
+- Backend: Manages communication between client, LIT Protocol, and Sign Protocol.
+- LIT Protocol: Provides decentralized key management and signing capabilities. Acts as the certified athority, replaces HSM in current systems.
+- Sign Protocol: Handles the final attestation and emission of signatures.
+
+
+
+![ValidAR Protocol Diagram](https://i.imgur.com/oEIjVPf.png)  
 
 ## Security and Privacy
 
-- The protocol ensures that biometric data is processed securely and is not stored directly on the blockchain.
-- The use of Soul-bound NFTs prevents identity theft or unauthorized transfers.
+- Biometric data is processed securely and not stored on-chain.
+- LIT Protocol ensures that no single entity has control over the user's signing capabilities.
+- Sign Protocol provides an immutable record of attestations.
 
 ## Use Cases
 
-- Digital document signing
-- Identity verification for online services
-- Secure voting systems
-- Anti-fraud measures in financial transactions
+- Legally binding digital document signing
+- Identity verification for high-security online services
+- orporate governance and voting systems
+- Financial transaction authorization
 ---
 
-ValidAR aims to bridge the gap between physical and digital identities, providing a secure and verifiable way for users to prove their identity and sign documents in the digital world.
+Firmar aims to bridge the gap between physical and digital identities, providing a secure and verifiable way for users to prove their identity and sign documents in the digital world.
+
 ## Setup
 
 1. Install the necessary dependencies`.
