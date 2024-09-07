@@ -1,6 +1,6 @@
 import { LitNodeClient } from '@lit-protocol/lit-node-client';
 import { LIT_RPC, LitNetwork } from '@lit-protocol/constants';
-import { createWalletClient, http, Transaction } from 'viem';
+import { createWalletClient, http } from 'viem';
 import { account } from './blockchain.utils';
 import {
   LitAbility,
@@ -24,10 +24,21 @@ export const walletClient = createWalletClient({
   transport: http(LIT_RPC.CHRONICLE_YELLOWSTONE)
 });
 
+// const litActionCode = `
+// const go = async () => {
+//   const sigShare = await LitActions.signEcdsa({ toSign, publicKey, sigName });
+//   LitActions.setResponse({response: JSON.stringify(sigShare)});
+// };
+// go();
+// `;
+
 const litActionCode = `
 const go = async () => {
-  const sigShare = await LitActions.signEcdsa({ toSign, publicKey, sigName });
-  LitActions.setResponse({response: JSON.stringify(sigShare)});
+  if (magicNumber >= 42) {
+      LitActions.setResponse({ response:"The number is greater than or equal to 42!" });
+  } else {
+      LitActions.setResponse({ response: "The number is less than 42!" });
+  }
 };
 go();
 `;
@@ -89,7 +100,8 @@ class LitService {
     return this.sessionSignatures;
   }
 
-  async signTransaction(unsignedTransaction: Transaction) {
+  // async signTransaction(unsignedTransaction: string, publicKey: string) {
+  async signTransaction(unsignedTransaction: string) {
     if (!this.sessionSignatures) {
       await this.createSessionSignatures();
     }
@@ -97,12 +109,16 @@ class LitService {
     const result = await this.litNodeClient.executeJs({
       code: litActionCode,
       jsParams: {
-        magicNumber: 43,
+        // toSign: unsignedTransaction,
+        // publicKey: publicKey,
+        // sigName: "sig1"
+        magicNumber: 42
       },
       sessionSigs: this.sessionSignatures
     });
 
-    return { ...unsignedTransaction, ...result };
+    // return { ...unsignedTransaction, ...result };
+    return { unsignedTransaction, ...result };
   }
 }
 
