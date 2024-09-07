@@ -1,12 +1,12 @@
-import { createPublicClient, http, createWalletClient, parseAbi, Address } from 'viem';
+import { createPublicClient, http, createWalletClient, parseAbi, Address, encodeFunctionData, encodeAbiParameters, encodePacked } from 'viem';
 import { avalanche, polygon } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 import { CERTIFIED_SIGNER_SCHEMA_ID, CONTRACT_ADDRESS } from '../../globals';
-import {
-  SignProtocolClient,
-  SpMode,
-  EvmChains,
-} from '@ethsign/sp-sdk';
+// import {
+//   SignProtocolClient,
+//   SpMode,
+//   EvmChains,
+// } from '@ethsign/sp-sdk';
 
 // Load environment variables
 const PRIVATE_KEY = process.env.PRIVATE_KEY as Address || '' ;
@@ -38,6 +38,12 @@ export const walletClient = createWalletClient({
   chain: avalanche,
   transport: http()
 });
+
+const polygonWalletClient = createWalletClient({
+  account,
+  chain: polygon,
+  transport: http()
+})
 
 // Contract configuration
 export const contractConfig = {
@@ -94,17 +100,67 @@ export async function createCertifiedSignerAttestation(
     did: string,
   }
 ) {
-  const client = new SignProtocolClient(SpMode.OnChain, {
-    chain: EvmChains.polygon,
-    account 
-  });
+  const abi = parseAbi([
+    'function attest((uint64,uint64,uint64,uint64,address,uint64,uint8,bool,bytes[],bytes), string, bytes, bytes) external payable returns (bytes32)',
+  ])
+  
+  const currentTimestamp = BigInt(Math.floor(Date.now() / 1000))
 
-  const attestationInfo = await client.createAttestation({
-    schemaId: CERTIFIED_SIGNER_SCHEMA_ID,
-    data: certificate,
-    indexingValue: to,
-    recipients: [to]
-  });
+  // Construct the attestation object
+  const attestation: readonly [bigint, bigint, bigint, bigint, Address, bigint, number, boolean, readonly `0x${string}`[], `0x${string}`] = [
+    BigInt(CERTIFIED_SIGNER_SCHEMA_ID),
+    BigInt(0), // linkedAttestationId
+    currentTimestamp,
+    BigInt(0), // revokeTimestamp
+    account.address,
+    BigInt(0), // validUntil
+    0, // dataLocation (assuming 0 represents on-chain storage)
+    false, // revoked
+    [encodePacked(['address'], [to])], // recipients
+    encodeAbiParameters(
+      [
+        { type: 'string' },
+        { type: 'string' },
+        { type: 'string' },
+        { type: 'string' },
+        { type: 'string' }
+      ],
+      [
+        certificate.first_name,
+        certificate.last_name,
+        certificate.national_document_identifier,
+        certificate.signature_cid,
+        certificate.did
+      ]
+    )
+  ]
 
-  return attestationInfo;
+
+  // Encode the function call
+  const data = encodeFunctionData({
+    abi,
+    functionName: 'attest',
+    args: [
+      attestation,
+      to, // indexingKey
+      '0x', // delegateSignature (empty in this case)
+      '0x'  // extraData (empty in this case)
+    ],
+  })
+
+  // Get the current gas price
+  const gasPrice = await polygonPublicClient.getGasPrice()
+
+  // Construct the transaction object
+  const transaction = {
+    to: '0xe2C15B97F628B7Ad279D6b002cEDd414390b6D63' as Address,
+    data,
+    gasPrice,
+    value: BigInt(0)
+  }
+
+  const hash = await polygonWalletClient.sendTransaction(transaction)
+  console.log('Transaction sent:', hash)
+
+  return { attestationId: 1, txHash: hash}
 }
