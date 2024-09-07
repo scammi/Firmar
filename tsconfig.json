@@ -22,9 +22,7 @@
     "moduleResolution": "node",
     "strict": true,
     "composite":true
-
-
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx" ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "jest.config.js"],
   "exclude": ["node_modules"],
 }
