@@ -1,6 +1,7 @@
 import { signMessage } from "viem/actions";
 import { LIT_CONFIG, litService, walletClient } from "./lit.utils";
 import { expect, describe, it, beforeAll, afterAll } from '@jest/globals';
+import { recoverAddress, recoverPublicKey } from "viem";
 
 describe('Lit protocol', () => {
 
@@ -39,5 +40,25 @@ describe('Lit protocol', () => {
     const signedTx = await litService.signTransaction(toSign, LIT_CONFIG.PKP_PUBLIC_KEY);
     expect(signedTx).toBeDefined();
     console.log(signedTx);
+
+    const dataSigned = `0x${signedTx.signatures.sig1.dataSigned}`;
+    const encodedSig = `0x${signedTx.signatures.sig1.r}${signedTx.signatures.sig1.s}${signedTx.signatures.sig1.recid.toString(16).padStart(2, '0')}`
+    
+    const recoveredPubkey = await recoverPublicKey({
+      //@ts-ignore
+      hash: dataSigned,
+      //@ts-ignore
+      signature: encodedSig
+    })
+    console.log("Recovered uncompressed public key: ", recoveredPubkey)
+    
+    const recoveredAddress = await recoverAddress({
+      //@ts-ignore
+      hash: dataSigned,
+      //@ts-ignore
+      signature: encodedSig
+    })
+    console.log("Recovered address from signature: ", recoveredAddress)
+    
   }, 20000);
 });
