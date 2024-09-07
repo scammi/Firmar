@@ -16,11 +16,6 @@ export const LIT_CONFIG = {
   NETWORK: LitNetwork.DatilDev,
   FUNDING_PRIVATE_KEY: process.env.FUNDING_PRIVATE_KEY as `0x${string}`,
   PKP_PUBLIC_KEY: '04260b583c7276e2a29accd71827b4be30ebd6ff5d2683aef75d384ea4717fe58b489a42fe99f96e9c602f66263be8e39b60ad15a7e49f6b312270700fd5496032'
-  // pkp: {
-  //   tokenId: '0xe724fa4daec7ef6b480a7502bd03e338aed5b921207ef4cb616fdc0fd1e8f54b',
-  //   publicKey: '04260b583c7276e2a29accd71827b4be30ebd6ff5d2683aef75d384ea4717fe58b489a42fe99f96e9c602f66263be8e39b60ad15a7e49f6b312270700fd5496032',
-  //   ethAddress: '0x46b0c4861e5e0dc41900D62695330139b6DDcACD'
-  // },
 };
 
 export const CHAIN_CONFIG = {
@@ -81,9 +76,6 @@ class LitService {
     console.log("🔄 PKP wasn't provided, minting a new one...");
     const mintTx = await this.litContracts.pkpNftContractUtils.write.mint();
     console.log("✅ PKP successfully minted");
-
-    // Update the config or store the new PKP info securely
-    console.log('>>>>>>>>>>> ', mintTx);
     LIT_CONFIG.PKP_PUBLIC_KEY = mintTx.pkp.publicKey;
   }
 
@@ -125,7 +117,7 @@ class LitService {
     return this.sessionSignatures;
   }
 
-  async signTransaction(unsignedTransaction: string, publicKey: string) {
+  async signTransaction(unsignedTransaction: number[], publicKey: string) {
     if (!this.sessionSignatures) {
       await this.createSessionSignatures();
     }
