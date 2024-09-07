@@ -2,11 +2,6 @@ import { createPublicClient, http, createWalletClient, parseAbi, Address, encode
 import { avalanche, polygon } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 import { CERTIFIED_SIGNER_SCHEMA_ID, CONTRACT_ADDRESS } from '../../globals';
-// import {
-//   SignProtocolClient,
-//   SpMode,
-//   EvmChains,
-// } from '@ethsign/sp-sdk';
 
 // Load environment variables
 const PRIVATE_KEY = process.env.PRIVATE_KEY as Address || '' ;
@@ -29,10 +24,8 @@ export const polygonPublicClient = createPublicClient({
   transport: http()
 });
 
-// Create account from private key
 export const account = privateKeyToAccount(`0x${PRIVATE_KEY}`);
 
-// Create wallet client
 export const walletClient = createWalletClient({
   account,
   chain: avalanche,
@@ -45,8 +38,8 @@ const polygonWalletClient = createWalletClient({
   transport: http()
 })
 
-// Contract configuration
-export const contractConfig = {
+// Lock mint Contract configuration
+export const lockMintContractConfig = {
   address: CONTRACT_ADDRESS as `0x${string}`,
   abi: lockMintAbi
 };
@@ -56,7 +49,7 @@ export async function callLockMint(to: Address, uri: string) {
     try {
       // Simulate the transaction
       const { request, result } = await avaxPublicClient.simulateContract({
-        ...contractConfig,
+        ...lockMintContractConfig,
         functionName: 'lockMint',
         args: [to, uri],
         account: account,
@@ -114,7 +107,7 @@ export async function createCertifiedSignerAttestation(
     BigInt(0), // revokeTimestamp
     account.address,
     BigInt(0), // validUntil
-    0, // dataLocation (assuming 0 represents on-chain storage)
+    0, // dataLocation
     false, // revoked
     [encodePacked(['address'], [to])], // recipients
     encodeAbiParameters(
@@ -135,7 +128,6 @@ export async function createCertifiedSignerAttestation(
     )
   ]
 
-
   // Encode the function call
   const data = encodeFunctionData({
     abi,
@@ -153,7 +145,7 @@ export async function createCertifiedSignerAttestation(
 
   // Construct the transaction object
   const transaction = {
-    to: '0xe2C15B97F628B7Ad279D6b002cEDd414390b6D63' as Address,
+    to: '0xe2C15B97F628B7Ad279D6b002cEDd414390b6D63' as Address, // Polygon SP contract
     data,
     gasPrice,
     value: BigInt(0)

@@ -23,12 +23,7 @@ export const LIT_CONFIG = {
   // },
 };
 
-export const CHAIN_CONFIG = {
-  rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
-  chainId: 43114,
-};
-
-export const walletClient = createWalletClient({
+export const litWalletClient = createWalletClient({
   account,
   transport: http(LIT_RPC.CHRONICLE_YELLOWSTONE)
 });
@@ -45,7 +40,7 @@ class LitService {
   private litNodeClient: LitNodeClient;
   private litContracts: LitContracts;
 
-  public sessionSignatures: SessionSigsMap | undefined; // Type this properly based on the actual type
+  public sessionSignatures: SessionSigsMap | undefined;
 
   constructor() {
     this.litNodeClient = new LitNodeClient({
@@ -54,7 +49,7 @@ class LitService {
     });
 
     const ethersProvider = new ethers.providers.JsonRpcProvider(LIT_RPC.CHRONICLE_YELLOWSTONE);
-    const ethersWallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? '', ethersProvider);
+    const ethersWallet = new ethers.Wallet(process.env.PRIVATE_KEY!, ethersProvider);
 
     this.litContracts = new LitContracts({
       network: LIT_CONFIG.NETWORK,
@@ -106,7 +101,7 @@ class LitService {
           litNodeClient: this.litNodeClient,
         });
 
-        const signature = await signMessage(walletClient, { message: toSign });
+        const signature = await signMessage(litWalletClient, { message: toSign });
 
         return {
           sig: signature,
