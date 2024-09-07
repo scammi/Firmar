@@ -8,6 +8,7 @@ import {
   createSiweMessage,
 } from "@lit-protocol/auth-helpers";
 import { signMessage } from 'viem/actions';
+import { SessionSigsMap } from '@lit-protocol/types';
 
 export const LIT_CONFIG = {
   NETWORK: LitNetwork.DatilDev,
@@ -24,28 +25,28 @@ export const walletClient = createWalletClient({
   transport: http(LIT_RPC.CHRONICLE_YELLOWSTONE)
 });
 
-// const litActionCode = `
-// const go = async () => {
-//   const sigShare = await LitActions.signEcdsa({ toSign, publicKey, sigName });
-//   LitActions.setResponse({response: JSON.stringify(sigShare)});
-// };
-// go();
-// `;
-
 const litActionCode = `
 const go = async () => {
-  if (magicNumber >= 42) {
-      LitActions.setResponse({ response:"The number is greater than or equal to 42!" });
-  } else {
-      LitActions.setResponse({ response: "The number is less than 42!" });
-  }
+  const sigShare = await LitActions.signEcdsa({ toSign, publicKey, sigName });
+  LitActions.setResponse({response: JSON.stringify(sigShare)});
 };
 go();
 `;
 
+// const litActionCode = `
+// const go = async () => {
+//   if (magicNumber >= 42) {
+//       LitActions.setResponse({ response:"The number is greater than or equal to 42!" });
+//   } else {
+//       LitActions.setResponse({ response: "The number is less than 42!" });
+//   }
+// };
+// go();
+// `;
+
 class LitService {
   private litNodeClient: LitNodeClient;
-  private sessionSignatures: any; // Type this properly based on the actual type
+  public sessionSignatures: SessionSigsMap | undefined; // Type this properly based on the actual type
 
   constructor() {
     this.litNodeClient = new LitNodeClient({
@@ -100,8 +101,7 @@ class LitService {
     return this.sessionSignatures;
   }
 
-  // async signTransaction(unsignedTransaction: string, publicKey: string) {
-  async signTransaction(unsignedTransaction: string) {
+  async signTransaction(unsignedTransaction: string, publicKey: string) {
     if (!this.sessionSignatures) {
       await this.createSessionSignatures();
     }
@@ -109,10 +109,10 @@ class LitService {
     const result = await this.litNodeClient.executeJs({
       code: litActionCode,
       jsParams: {
-        // toSign: unsignedTransaction,
-        // publicKey: publicKey,
-        // sigName: "sig1"
-        magicNumber: 42
+        toSign: unsignedTransaction,
+        publicKey: publicKey,
+        sigName: "sig1"
+        // magicNumber: 41
       },
       sessionSigs: this.sessionSignatures
     });

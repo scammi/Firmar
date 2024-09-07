@@ -32,8 +32,22 @@ describe('Lit protocol', () => {
       data: '0x',
     };
 
-    const signedTx = await litService.signTransaction(unsignedTx.to);
+    const pbk = extractAddresses(litService.sessionSignatures);
+
+    const signedTx = await litService.signTransaction(unsignedTx.to, pbk);
     expect(signedTx).toBeDefined();
     console.log(signedTx);
   }, 20000);
 });
+
+function extractAddresses(obj: any) {
+  const addresses = [];
+  
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key) && obj[key].hasOwnProperty('address')) {
+      addresses.push(obj[key].address);
+    }
+  }
+  
+  return addresses[0];
+}
