@@ -17,6 +17,8 @@ export default function Dashboard() {
   const router = useRouter();
   const { ready, authenticated, user } = usePrivy();
   const [expanded, setExpanded] = useState(false);
+  const [attesationHashURL, setAttesationHashURL] = useState('');
+  const [attesationIdURL, setAttesationIdURL] = useState('');
   const theme = useTheme();
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -36,7 +38,13 @@ export default function Dashboard() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+  useEffect(() => {
+    if (isAttestationLoading) {
+      setAttesationHashURL(`https://polygonscan.com/tx/${attestationData?.transactionHash}`)  
+      setAttesationIdURL(`https://scan.sign.global/attestation/${attestationData?.id}`)  
+    }
+  }, [isAttestationLoading]);
+ 
   useEffect(() => {
     if (ready && !authenticated) {
       router.push("/");
@@ -125,13 +133,18 @@ export default function Dashboard() {
                     onClose={handleClose}
                   >
                     <MenuItem onClick={handleClose}>
-                      <Typography component="a" href={nftUserScan} target="_blank" rel="noopener noreferrer" sx={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
-                        NFT On-chain actions <LaunchIcon fontSize="small" sx={{ ml: 1 }} />
+                      <Typography component="a" href={attesationHashURL} target="_blank" rel="noopener noreferrer" sx={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
+                        Attestation hash <LaunchIcon fontSize="small" sx={{ ml: 1 }} />
                       </Typography>
                     </MenuItem>
                     <MenuItem onClick={handleClose}>
-                      <Typography component="a" href={'*'} target="_blank" rel="noopener noreferrer" sx={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
-                        Attestation On-chain actions <LaunchIcon fontSize="small" sx={{ ml: 1 }} />
+                      <Typography component="a" href={attesationIdURL} target="_blank" rel="noopener noreferrer" sx={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
+                        Attestation ID <LaunchIcon fontSize="small" sx={{ ml: 1 }} />
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                      <Typography component="a" href={nftUserScan} target="_blank" rel="noopener noreferrer" sx={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
+                        NFT On-chain <LaunchIcon fontSize="small" sx={{ ml: 1 }} />
                       </Typography>
                     </MenuItem>
                   </Menu>

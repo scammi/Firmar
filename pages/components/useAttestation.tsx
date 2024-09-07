@@ -5,7 +5,7 @@ const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
 
 export const useAttestations = (walletAddress: string | undefined) => {
-  const [attestationData, setAttestationData] = useState<{ success: boolean; attestations: any[] } | null>(null);
+  const [attestationData, setAttestationData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
