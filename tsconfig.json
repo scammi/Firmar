@@ -21,7 +21,8 @@
     "exactOptionalPropertyTypes": false,
     "moduleResolution": "node",
     "strict": true,
-    "composite":true
+    "composite":true,
+    "types": ["jest", "node" ],
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "jest.config.js"],
   "exclude": ["node_modules"],
