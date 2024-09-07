@@ -33,7 +33,7 @@ describe('Lit protocol', () => {
     };
 
     const pbk = extractAddresses(litService.sessionSignatures);
-
+    console.log(litService.sessionSignatures)
     const signedTx = await litService.signTransaction(unsignedTx.to, pbk);
     expect(signedTx).toBeDefined();
     console.log(signedTx);

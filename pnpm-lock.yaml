@@ -68,6 +68,9 @@ importers:
       blockstore-core:
         specifier: ^5.0.0
         version: 5.0.0
+      ethers:
+        specifier: ^5.7.2
+        version: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       formidable:
         specifier: ^3.5.1
         version: 3.5.1
