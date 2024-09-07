@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { queryAttestations } from '../api/get-attestation';
 
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // 1 second
+const MAX_RETRIES = 20;
+const RETRY_DELAY = 2200; // 1 second
 
 export const useAttestations = (walletAddress: string | undefined) => {
   const [attestationData, setAttestationData] = useState<any>(null);

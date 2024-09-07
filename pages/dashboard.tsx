@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { usePrivy } from "@privy-io/react-auth";
-import { Box, Typography, CircularProgress, Grid, CardContent, Card, useMediaQuery, useTheme, Collapse, Link, Button, Table, TableBody, TableCell, TableRow, IconButton, Menu, MenuItem } from '@mui/material';
+import { Box, Typography, CircularProgress, Grid, CardContent, Card, useMediaQuery, useTheme, Collapse, Button, Table, TableBody, TableCell, TableRow, IconButton, Menu, MenuItem } from '@mui/material';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -43,7 +43,7 @@ export default function Dashboard() {
       setAttesationHashURL(`https://polygonscan.com/tx/${attestationData?.transactionHash}`)  
       setAttesationIdURL(`https://scan.sign.global/attestation/${attestationData?.id}`)  
     }
-  }, [isAttestationLoading]);
+  }, [isAttestationLoading, attestationData]);
  
   useEffect(() => {
     if (ready && !authenticated) {
