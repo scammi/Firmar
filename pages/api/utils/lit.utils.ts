@@ -16,6 +16,11 @@ export const LIT_CONFIG = {
   NETWORK: LitNetwork.DatilDev,
   FUNDING_PRIVATE_KEY: process.env.FUNDING_PRIVATE_KEY as `0x${string}`,
   PKP_PUBLIC_KEY: '04260b583c7276e2a29accd71827b4be30ebd6ff5d2683aef75d384ea4717fe58b489a42fe99f96e9c602f66263be8e39b60ad15a7e49f6b312270700fd5496032'
+  // pkp: {
+  //   tokenId: '0xe724fa4daec7ef6b480a7502bd03e338aed5b921207ef4cb616fdc0fd1e8f54b',
+  //   publicKey: '04260b583c7276e2a29accd71827b4be30ebd6ff5d2683aef75d384ea4717fe58b489a42fe99f96e9c602f66263be8e39b60ad15a7e49f6b312270700fd5496032',
+  //   ethAddress: '0x46b0c4861e5e0dc41900D62695330139b6DDcACD'
+  // },
 };
 
 export const CHAIN_CONFIG = {
@@ -51,8 +56,6 @@ class LitService {
     const ethersProvider = new ethers.providers.JsonRpcProvider(LIT_RPC.CHRONICLE_YELLOWSTONE);
     const ethersWallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? '', ethersProvider);
 
-    console.log(ethersWallet)
-  
     this.litContracts = new LitContracts({
       network: LIT_CONFIG.NETWORK,
       signer: ethersWallet
@@ -128,12 +131,10 @@ class LitService {
         toSign: unsignedTransaction,
         publicKey: publicKey,
         sigName: "sig1"
-        // magicNumber: 41
       },
       sessionSigs: this.sessionSignatures
     });
 
-    // return { ...unsignedTransaction, ...result };
     return { unsignedTransaction, ...result };
   }
 }
