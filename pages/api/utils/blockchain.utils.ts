@@ -44,7 +44,10 @@ export const lockMintContractConfig = {
   abi: lockMintAbi
 };
 
-  
+// We are using low level so we can provide the raw transaction as bytes to the lit protocol for signing.
+// Related:
+// pages/api/utils/blockchain.utils.test.ts
+// pages/components/useAttestation.tsx
 export async function createCertifiedSignerAttestation(
   to: Address,
   certificate: { 

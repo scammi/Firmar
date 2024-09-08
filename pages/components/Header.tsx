@@ -38,7 +38,7 @@ const Header = () => {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <HomeIcon color="primary" sx={{ mr: 1 }} />
           <Typography variant="h6" component="div" color="primary">
-            validAR
+            Firmar
           </Typography>
         </Box>
       ) : (

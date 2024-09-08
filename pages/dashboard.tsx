@@ -39,7 +39,7 @@ export default function Dashboard() {
     setAnchorEl(null);
   };
   useEffect(() => {
-    if (isAttestationLoading) {
+    if (!isAttestationLoading) {
       setAttesationHashURL(`https://polygonscan.com/tx/${attestationData?.transactionHash}`)  
       setAttesationIdURL(`https://scan.sign.global/attestation/${attestationData?.id}`)  
     }
@@ -94,7 +94,7 @@ export default function Dashboard() {
             <Card elevation={3} sx={{ marginBottom: 3 }}>
               <CardContent>
                 <Typography variant="h5" gutterBottom color="primary" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}>
-                  Your Soul Token Metadata
+                  Welcome to Firmar 
                 </Typography>
                 <Table>
                   <TableBody>
@@ -121,7 +121,7 @@ export default function Dashboard() {
                     aria-haspopup="true"
                     onClick={handleClick}
                   >
-                    <Typography>On chain action </Typography> <MoreVertIcon />
+                    <Typography>On chain state </Typography> <MoreVertIcon />
                   </IconButton>
                   <Menu
                     id="long-menu"

@@ -5,6 +5,7 @@ import Head from 'next/head';
 import { Box, Typography, Paper, Grid, Button, CircularProgress, TextField, Slider } from '@mui/material';
 import Header from './components/Header';
 import { verifyMessage } from 'viem';
+import useNFTStatus from './components/useNFTStatus';
 
 export default function ExploreWeb3() {
   const router = useRouter();
@@ -15,6 +16,8 @@ export default function ExploreWeb3() {
   const [messageToSign, setMessageToSign] = useState('');
   const [signature, setSignature] = useState('');
   const [verificationResult, setVerificationResult] = useState('');
+
+  const { metadata, isLoading: isNFTLoading, error, userScan: nftUserScan } = useNFTStatus();
 
   React.useEffect(() => {
     if (ready && !authenticated) {
@@ -56,6 +59,17 @@ export default function ExploreWeb3() {
     );
   }
 
+  const handleNavigateToSign = () => {
+    if (metadata && !isNFTLoading) {
+      const queryParams = new URLSearchParams({
+        name: metadata?.nombre || '',
+        dni: metadata?.dni || '',
+        signatureCid: metadata?.signatureCid || ''
+      }).toString();
+      router.push(`/sign?${queryParams}`);
+    }
+  };
+
   return (
     <>
       <Header />
@@ -80,7 +94,7 @@ export default function ExploreWeb3() {
                 valueLabelDisplay="auto"
                 sx={{ mt: 2 }}
               />
-              <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+              <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }} onClick={handleNavigateToSign}>
                 Borrow {loanAmount} USDC
               </Button>
             </Paper>

@@ -82,7 +82,7 @@ export default function LoginPage() {
             <Portal style={{ maxWidth: "100%", height: "auto" }} />
           </Box>
           <Typography variant="h4" component="h1" gutterBottom align="center">
-            Validar
+            Firmar
           </Typography>
           <Button
             variant="contained"
