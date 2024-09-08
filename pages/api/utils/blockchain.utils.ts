@@ -2,6 +2,8 @@ import { createPublicClient, http, createWalletClient, parseAbi, Address, encode
 import { avalanche, polygon } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 import { CERTIFIED_SIGNER_SCHEMA_ID, CONTRACT_ADDRESS } from '../../globals';
+import { LIT_CONFIG } from './lit.utils';
+import { ethers, Transaction } from 'ethers';
 
 // Load environment variables
 const PRIVATE_KEY = process.env.PRIVATE_KEY as Address || '' ;
@@ -32,7 +34,7 @@ export const walletClient = createWalletClient({
   transport: http()
 });
 
-const polygonWalletClient = createWalletClient({
+export const polygonWalletClient = createWalletClient({
   account,
   chain: polygon,
   transport: http()
@@ -57,24 +59,23 @@ export async function createCertifiedSignerAttestation(
     signature_cid: string,
     did: string,
   }
-) {
+): Promise<{ transaction: any, toSign: Uint8Array }> {
   const abi = parseAbi([
     'function attest((uint64,uint64,uint64,uint64,address,uint64,uint8,bool,bytes[],bytes), string, bytes, bytes) external payable returns (bytes32)',
-  ])
+  ]);
   
-  const currentTimestamp = BigInt(Math.floor(Date.now() / 1000))
+  const currentTimestamp = BigInt(Math.floor(Date.now() / 1000));
 
-  // Construct the attestation object
   const attestation: readonly [bigint, bigint, bigint, bigint, Address, bigint, number, boolean, readonly `0x${string}`[], `0x${string}`] = [
     BigInt(CERTIFIED_SIGNER_SCHEMA_ID),
-    BigInt(0), // linkedAttestationId
+    BigInt(0),
     currentTimestamp,
-    BigInt(0), // revokeTimestamp
-    account.address,
-    BigInt(0), // validUntil
-    0, // dataLocation
-    false, // revoked
-    [encodePacked(['address'], [to])], // recipients
+    BigInt(0),
+    to,
+    BigInt(0),
+    0,
+    false,
+    [encodePacked(['address'], [to])],
     encodeAbiParameters(
       [
         { type: 'string' },
@@ -91,37 +92,48 @@ export async function createCertifiedSignerAttestation(
         certificate.did
       ]
     )
-  ]
+  ];
 
-  // Encode the function call
   const data = encodeFunctionData({
     abi,
     functionName: 'attest',
     args: [
       attestation,
-      to, // indexingKey
-      '0x', // delegateSignature (empty in this case)
-      '0x'  // extraData (empty in this case)
+      to,
+      '0x',
+      '0x'
     ],
-  })
+  });
 
-  // Get the current gas price
-  const gasPrice = await polygonPublicClient.getGasPrice()
+  const gasPrice = await polygonPublicClient.getGasPrice();
 
-  // Construct the transaction object
   const transaction = {
-    to: '0xe2C15B97F628B7Ad279D6b002cEDd414390b6D63' as Address, // Polygon SP contract
+    to: '0xe2C15B97F628B7Ad279D6b002cEDd414390b6D63' as Address,
     data,
     gasPrice,
-    value: BigInt(0)
-  }
+    value: BigInt(0),
+    nonce: await polygonPublicClient.getTransactionCount({ address: LIT_CONFIG.PKP.ethAddress as Address}),
+    gasLimit: BigInt(300000),
+    chainId: 137, // Polygon Mainnet
+  };
 
-  const hash = await polygonWalletClient.sendTransaction(transaction)
-  console.log('Transaction sent:', hash)
+  const toSign = ethers.utils.arrayify(ethers.utils.keccak256(ethers.utils.serializeTransaction(transaction)));
 
-  return { attestationId: 1, txHash: hash}
+  return { transaction, toSign };
 }
 
+export async function combineSignatureWithTransaction(
+  transaction: Transaction,
+  signature: string
+): Promise<string> {
+  const signedTx = ethers.utils.serializeTransaction(transaction, signature);
+  return signedTx;
+}
+
+export async function broadcastToPolygon(signedTransaction: string): Promise<string> {
+  const hash = await polygonPublicClient.sendRawTransaction({ serializedTransaction: signedTransaction as `0x${string}` });
+  return hash;
+}
 
 // Function to call lockMint
 export async function callLockMint(to: Address, uri: string) {
@@ -161,3 +173,5 @@ export async function callLockMint(to: Address, uri: string) {
       throw error;
     }
 }
+
+

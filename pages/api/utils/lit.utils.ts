@@ -15,12 +15,12 @@ import { ethers } from 'ethers';
 export const LIT_CONFIG = {
   NETWORK: LitNetwork.DatilDev,
   FUNDING_PRIVATE_KEY: process.env.FUNDING_PRIVATE_KEY as `0x${string}`,
-  PKP_PUBLIC_KEY: '04260b583c7276e2a29accd71827b4be30ebd6ff5d2683aef75d384ea4717fe58b489a42fe99f96e9c602f66263be8e39b60ad15a7e49f6b312270700fd5496032'
-  // pkp: {
-  //   tokenId: '0xe724fa4daec7ef6b480a7502bd03e338aed5b921207ef4cb616fdc0fd1e8f54b',
-  //   publicKey: '04260b583c7276e2a29accd71827b4be30ebd6ff5d2683aef75d384ea4717fe58b489a42fe99f96e9c602f66263be8e39b60ad15a7e49f6b312270700fd5496032',
-  //   ethAddress: '0x46b0c4861e5e0dc41900D62695330139b6DDcACD'
-  // },
+  PKP_PUBLIC_KEY: '04260b583c7276e2a29accd71827b4be30ebd6ff5d2683aef75d384ea4717fe58b489a42fe99f96e9c602f66263be8e39b60ad15a7e49f6b312270700fd5496032',
+  PKP: {
+    tokenId: '0xe724fa4daec7ef6b480a7502bd03e338aed5b921207ef4cb616fdc0fd1e8f54b',
+    publicKey: '04260b583c7276e2a29accd71827b4be30ebd6ff5d2683aef75d384ea4717fe58b489a42fe99f96e9c602f66263be8e39b60ad15a7e49f6b312270700fd5496032',
+    ethAddress: '0x46b0c4861e5e0dc41900D62695330139b6DDcACD'
+  },
 };
 
 export const litWalletClient = createWalletClient({
@@ -131,6 +131,23 @@ class LitService {
     });
 
     return { unsignedTransaction, ...result };
+  }
+
+  async signWithLitProtocol(toSign: Uint8Array, publicKey: string): Promise<string> {
+    const result = await litService.signTransaction(Array.from(toSign), publicKey);
+    
+    // Parse the response from Lit Protocol
+    const parsedResponse = JSON.parse(result.response as string);
+    
+    // Extract the signature components
+    const r = "0x" + parsedResponse.r.substring(2);
+    const s = "0x" + parsedResponse.s;
+    const v = parsedResponse.recid;
+    
+    // Combine r, s, and v into a single signature string
+    const signature = ethers.utils.joinSignature({ r, s, v });
+    
+    return signature;
   }
 }
 

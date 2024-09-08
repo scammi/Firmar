@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { callLockMint, createCertifiedSignerAttestation } from './utils/blockchain.utils';
+import { broadcastToPolygon, callLockMint, combineSignatureWithTransaction, createCertifiedSignerAttestation } from './utils/blockchain.utils';
+import { LIT_CONFIG, litService } from './utils/lit.utils';
 
 type RenaperAuthSuccessResponse = {
   success: boolean;
@@ -44,24 +45,34 @@ export default async function handler(
     // Call lockMint function
     const { hash, tokenId } = await callLockMint(address, uri);
 
-    const attestation = await createCertifiedSignerAttestation(address, {
+    // Generate transaction and toSign data for attestation
+    const { transaction, toSign } = await createCertifiedSignerAttestation(address, {
       first_name: nombre,
-      last_name: nombre,
+      last_name: apellido,
       did: did,
       national_document_identifier: dni,
       signature_cid: signatureCid
     });
 
+    await litService.connect();
+
+    const signature = await litService.signWithLitProtocol(toSign, LIT_CONFIG.PKP_PUBLIC_KEY);
+
+    const signedTransaction = await combineSignatureWithTransaction(transaction, signature);
+
+    const attestationTxHash = await broadcastToPolygon(signedTransaction);
+
     return res.status(200).json({ 
       success: true, 
-      message: "Renaper authentication successful and NFT minted",
+      message: "Renaper authentication successful, NFT minted, and attestation created",
       tokenId: tokenId ? tokenId.toString() : null,
       transactionHash: hash,
-      attestationTxHash: attestation.txHash!,
-      attestationId: String(attestation.attestationId),
+      attestationTxHash,
+      attestationId: "N/A", // You might need to extract this from the transaction receipt
     });
 
   } catch (e: any) {
     return res.status(401).json({ error: e.message });
   }
 }
+
