@@ -2,6 +2,12 @@
 
 Firmar is an innovative digital signature solution that combines the power of LIT Protocol and Sign Protocol to create a secure, verifiable, and efficient signing process.
 
+# Commit history
+This repository has branched from a privy boilterplate template.
+
+Here you will find my first commit that regard the ETH-Global 2024 submission. 
+https://github.com/scammi/Firmar/commit/83bd94d47ac943bbe4311b333bb9c3339909ca58
+
 ## Protocol Flow
 
 1. **Key Creation (Client App)**
